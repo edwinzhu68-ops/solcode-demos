@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SolCode - Dashboard Demo</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+body{font-family:'Inter',sans-serif;background:#0f0f13;color:#fff}
+.sidebar{width:250px;background:#16161d;min-height:100vh;padding:20px;position:fixed;left:0;top:0}
+.main{margin-left:250px;padding:24px}
+.card{background:#16161d;border:1px solid #222;border-radius:14px;padding:20px}
+.nav-item{display:flex;align-items:center;gap:10px;padding:10px 14px;border-radius:10px;font-size:14px;color:#888;cursor:pointer;transition:all .2s}
+.nav-item:hover,.nav-item.active{background:#1e1e2a;color:#fff}
+.nav-item.active{border-left:3px solid #6c5ce7}
+.stat-up{color:#22c55e}.stat-down{color:#ef4444}
+.table-row{display:grid;grid-template-columns:2fr 1fr 1fr 1fr 1fr;padding:12px 16px;border-bottom:1px solid #1a1a24;font-size:13px;align-items:center}
+.table-row:hover{background:#1a1a24}
+.badge-green{background:#22c55e20;color:#22c55e;padding:4px 10px;border-radius:20px;font-size:11px}
+.badge-yellow{background:#eab30820;color:#eab308;padding:4px 10px;border-radius:20px;font-size:11px}
+.badge-red{background:#ef444420;color:#ef4444;padding:4px 10px;border-radius:20px;font-size:11px}
+@media(max-width:768px){.sidebar{display:none}.main{margin-left:0}}
+</style>
+</head>
+<body>
+
+<div class="sidebar">
+  <div class="flex items-center gap-2 mb-8">
+    <div class="w-9 h-9 rounded-lg bg-[#6c5ce7] flex items-center justify-center font-bold text-sm">M</div>
+    <div><p class="font-semibold text-sm">Mi Negocio</p><p class="text-[10px] text-gray-500">Panel Admin</p></div>
+  </div>
+  <div class="space-y-1">
+    <div class="nav-item active"><span>📊</span> Dashboard</div>
+    <div class="nav-item"><span>📦</span> Inventario</div>
+    <div class="nav-item"><span>🛒</span> Ventas</div>
+    <div class="nav-item"><span>👥</span> Clientes</div>
+    <div class="nav-item"><span>📋</span> Reportes</div>
+    <div class="nav-item"><span>💬</span> Mensajes <span class="ml-auto bg-[#6c5ce7] text-white text-[10px] px-2 py-0.5 rounded-full">3</span></div>
+    <div class="nav-item"><span>⚙️</span> Configuraci&oacute;n</div>
+  </div>
+  <div class="mt-auto pt-8">
+    <div class="p-4 bg-[#6c5ce7]/10 rounded-xl border border-[#6c5ce7]/20">
+      <p class="text-xs text-[#6c5ce7] font-semibold">Demo SolCode</p>
+      <p class="text-[10px] text-gray-500 mt-1">Sistema a medida para su negocio</p>
+    </div>
+  </div>
+</div>
+
+<div class="main">
+  <div class="flex justify-between items-center mb-6">
+    <div>
+      <h1 class="text-2xl font-bold">Dashboard</h1>
+      <p class="text-gray-500 text-sm">Resumen de hoy, Marzo 25 2026</p>
+    </div>
+    <select class="bg-[#1e1e2a] border border-[#333] rounded-lg px-4 py-2 text-sm outline-none">
+      <option>Hoy</option><option>Esta semana</option><option>Este mes</option>
+    </select>
+  </div>
+
+  <!-- Stats -->
+  <div class="grid grid-cols-4 gap-4 mb-6">
+    <div class="card">
+      <p class="text-gray-500 text-xs mb-1">Ventas Hoy</p>
+      <p class="text-2xl font-bold">$4,285</p>
+      <p class="text-xs stat-up mt-1">↑ 12.5% vs ayer</p>
+    </div>
+    <div class="card">
+      <p class="text-gray-500 text-xs mb-1">Pedidos</p>
+      <p class="text-2xl font-bold">38</p>
+      <p class="text-xs stat-up mt-1">↑ 8 m&aacute;s que ayer</p>
+    </div>
+    <div class="card">
+      <p class="text-gray-500 text-xs mb-1">Clientes Nuevos</p>
+      <p class="text-2xl font-bold">12</p>
+      <p class="text-xs stat-up mt-1">↑ 3 m&aacute;s que ayer</p>
+    </div>
+    <div class="card">
+      <p class="text-gray-500 text-xs mb-1">Productos Bajo Stock</p>
+      <p class="text-2xl font-bold text-amber-400">5</p>
+      <p class="text-xs stat-down mt-1">Requiere atenci&oacute;n</p>
+    </div>
+  </div>
+
+  <!-- Charts -->
+  <div class="grid grid-cols-3 gap-4 mb-6">
+    <div class="card col-span-2">
+      <p class="font-semibold text-sm mb-4">Ventas - &Uacute;ltimos 7 d&iacute;as</p>
+      <canvas id="salesChart" height="120"></canvas>
+    </div>
+    <div class="card">
+      <p class="font-semibold text-sm mb-4">Ventas por Categor&iacute;a</p>
+      <canvas id="catChart" height="180"></canvas>
+    </div>
+  </div>
+
+  <!-- Recent Orders -->
+  <div class="card">
+    <div class="flex justify-between items-center mb-4">
+      <p class="font-semibold text-sm">&Uacute;ltimos Pedidos</p>
+      <button class="text-xs text-[#6c5ce7]">Ver todos →</button>
+    </div>
+    <div class="table-row text-xs text-gray-500 font-semibold border-b border-[#222]">
+      <div>Cliente</div><div>Pedido</div><div>Total</div><div>Estado</div><div>Hora</div>
+    </div>
+    <div class="table-row"><div>Mar&iacute;a Gonz&aacute;lez</div><div>#1042</div><div>$127.50</div><div><span class="badge-green">Completado</span></div><div class="text-gray-500">2:15 PM</div></div>
+    <div class="table-row"><div>Carlos Reyes</div><div>#1041</div><div>$85.00</div><div><span class="badge-green">Completado</span></div><div class="text-gray-500">1:48 PM</div></div>
+    <div class="table-row"><div>Ana Mart&iacute;nez</div><div>#1040</div><div>$234.99</div><div><span class="badge-yellow">En proceso</span></div><div class="text-gray-500">1:22 PM</div></div>
+    <div class="table-row"><div>Roberto Chen</div><div>#1039</div><div>$56.00</div><div><span class="badge-green">Completado</span></div><div class="text-gray-500">12:55 PM</div></div>
+    <div class="table-row"><div>Luisa P&eacute;rez</div><div>#1038</div><div>$312.00</div><div><span class="badge-yellow">En proceso</span></div><div class="text-gray-500">12:30 PM</div></div>
+    <div class="table-row"><div>Pedro Arias</div><div>#1037</div><div>$45.50</div><div><span class="badge-red">Cancelado</span></div><div class="text-gray-500">11:45 AM</div></div>
+  </div>
+</div>
+
+<script>
+const salesCtx=document.getElementById('salesChart').getContext('2d');
+new Chart(salesCtx,{type:'line',data:{labels:['Lun','Mar','Mi&eacute;','Jue','Vie','S&aacute;b','Dom'],datasets:[{label:'Ventas ($)',data:[3200,2800,3900,4100,3600,5200,4285],borderColor:'#6c5ce7',backgroundColor:'rgba(108,92,231,0.1)',fill:true,tension:.4,pointBackgroundColor:'#6c5ce7'}]},options:{responsive:true,plugins:{legend:{display:false}},scales:{y:{beginAtZero:false,grid:{color:'#1a1a24'},ticks:{color:'#666'}},x:{grid:{display:false},ticks:{color:'#666'}}}}});
+
+const catCtx=document.getElementById('catChart').getContext('2d');
+new Chart(catCtx,{type:'doughnut',data:{labels:['Electr&oacute;nica','Ropa','Alimentos','Hogar'],datasets:[{data:[35,25,22,18],backgroundColor:['#6c5ce7','#00cec9','#fdcb6e','#e17055'],borderWidth:0}]},options:{responsive:true,plugins:{legend:{position:'bottom',labels:{color:'#888',font:{size:11},padding:12}}}}});
+</script>
+</body>
+</html>

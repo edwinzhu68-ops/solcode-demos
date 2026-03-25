@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SolCode - AI Chatbot Demo</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+body{font-family:'Inter',sans-serif;background:#0f0f13;color:#fff;height:100vh;display:flex}
+.sidebar{width:320px;background:#16161d;border-right:1px solid #222;padding:24px;flex-shrink:0}
+.chat-area{flex:1;display:flex;flex-direction:column}
+.msg{max-width:80%;padding:14px 18px;border-radius:18px;font-size:14px;line-height:1.6;animation:fadeIn .3s}
+.msg-bot{background:#1e1e2a;border:1px solid #2a2a3a;border-bottom-left-radius:4px;align-self:flex-start}
+.msg-user{background:#6c5ce7;border-bottom-right-radius:4px;align-self:flex-end}
+.typing span{width:8px;height:8px;background:#666;border-radius:50%;display:inline-block;animation:typing 1.2s infinite}
+.typing span:nth-child(2){animation-delay:.2s}
+.typing span:nth-child(3){animation-delay:.4s}
+@keyframes typing{0%,100%{opacity:.3;transform:translateY(0)}50%{opacity:1;transform:translateY(-4px)}}
+@keyframes fadeIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+.quick-btn{padding:8px 16px;border-radius:20px;font-size:13px;border:1px solid #333;background:transparent;color:#aaa;cursor:pointer;transition:all .3s;white-space:nowrap}
+.quick-btn:hover{border-color:#6c5ce7;color:#6c5ce7}
+.stat-card{background:#1e1e2a;border:1px solid #2a2a3a;border-radius:12px;padding:16px;text-center}
+@media(max-width:768px){.sidebar{display:none}.chat-area{width:100%}}
+</style>
+</head>
+<body>
+
+<div class="sidebar">
+  <div class="flex items-center gap-3 mb-8">
+    <div class="w-10 h-10 rounded-full bg-[#6c5ce7] flex items-center justify-center font-bold">AI</div>
+    <div><p class="font-semibold">SolCode AI</p><p class="text-xs text-gray-500">Asistente Inteligente</p></div>
+  </div>
+
+  <p class="text-xs text-gray-500 uppercase tracking-wider mb-4">Estad&iacute;sticas Hoy</p>
+  <div class="space-y-3 mb-8">
+    <div class="stat-card"><p class="text-2xl font-bold text-[#6c5ce7]" id="stat-msgs">0</p><p class="text-xs text-gray-500">Mensajes</p></div>
+    <div class="stat-card"><p class="text-2xl font-bold text-green-400">94%</p><p class="text-xs text-gray-500">Resueltos sin humano</p></div>
+    <div class="stat-card"><p class="text-2xl font-bold text-amber-400">1.2s</p><p class="text-xs text-gray-500">Tiempo de respuesta</p></div>
+  </div>
+
+  <p class="text-xs text-gray-500 uppercase tracking-wider mb-4">Capacidades</p>
+  <div class="space-y-2 text-sm text-gray-400">
+    <p>✅ Respuestas autom&aacute;ticas 24/7</p>
+    <p>✅ Agenda citas y reservaciones</p>
+    <p>✅ Captura datos de clientes</p>
+    <p>✅ Resuelve preguntas frecuentes</p>
+    <p>✅ Escala a humano si necesario</p>
+    <p>✅ Multi-idioma (ES/EN/ZH)</p>
+  </div>
+
+  <div class="mt-8 p-4 bg-[#6c5ce7]/10 rounded-xl border border-[#6c5ce7]/20">
+    <p class="text-sm text-[#6c5ce7] font-semibold mb-1">Demo por SolCode</p>
+    <p class="text-xs text-gray-500">Este chatbot se integra con WhatsApp, Telegram y su p&aacute;gina web.</p>
+  </div>
+</div>
+
+<div class="chat-area">
+  <div class="px-6 py-4 border-b border-[#222] flex items-center justify-between">
+    <div class="flex items-center gap-3">
+      <div class="w-8 h-8 rounded-full bg-[#6c5ce7] flex items-center justify-center text-sm font-bold">AI</div>
+      <div><p class="font-semibold text-sm">Asistente de Cl&iacute;nica Dental Sonrisa</p><p class="text-xs text-green-400">En l&iacute;nea</p></div>
+    </div>
+    <span class="text-xs text-gray-500 bg-[#1e1e2a] px-3 py-1 rounded-full">Ejemplo: Cl&iacute;nica Dental</span>
+  </div>
+
+  <div class="flex-1 overflow-y-auto p-6 space-y-4 flex flex-col" id="chat-messages">
+  </div>
+
+  <div class="px-4 pb-2">
+    <div class="flex gap-2 overflow-x-auto pb-2" id="quick-replies"></div>
+  </div>
+
+  <div class="px-4 pb-4">
+    <div class="flex gap-3 bg-[#1e1e2a] border border-[#2a2a3a] rounded-2xl p-2">
+      <input type="text" id="chat-input" placeholder="Escriba su mensaje..." class="flex-1 bg-transparent outline-none px-3 text-sm" onkeydown="if(event.key==='Enter')sendMessage()">
+      <button onclick="sendMessage()" class="px-5 py-2.5 bg-[#6c5ce7] rounded-xl text-sm font-semibold hover:bg-[#5b4bd5] transition">Enviar</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const chatEl=document.getElementById('chat-messages');
+const inputEl=document.getElementById('chat-input');
+const quickEl=document.getElementById('quick-replies');
+let msgCount=0;
+
+const responses={
+  'horario':['Nuestro horario es:\n🕐 Lunes a Viernes: 8:00 AM - 6:00 PM\n🕐 S&aacute;bados: 9:00 AM - 2:00 PM\n🔴 Domingos: Cerrado\n\n&iquest;Le gustar&iacute;a agendar una cita?',['Agendar cita','Ubicaci&oacute;n','Precios']],
+  'cita':['&iexcl;Con gusto le agendo una cita! Necesito algunos datos:\n\n1. &iquest;Nombre completo?\n2. &iquest;Qu&eacute; d&iacute;a prefiere?\n3. &iquest;Ma&ntilde;ana o tarde?\n\nTambi&eacute;n puede llamarnos al 6804-0864 para agendar directamente.',['Ma&ntilde;ana disponible','Tarde disponible','Llamar']],
+  'precio':['Nuestros precios:\n\n🦷 Limpieza dental: $45\n🦷 Blanqueamiento: $150\n🦷 Extracci&oacute;n simple: $60\n🦷 Ortodoncia: desde $1,200\n🦷 Implante dental: desde $800\n\n&iexcl;Primera consulta GRATIS! &iquest;Le interesa agendar?',['Agendar cita','M&aacute;s servicios','WhatsApp']],
+  'ubicacion':['📍 Estamos en:\nCalle 50, Edificio Global Plaza, Piso 3\nBella Vista, Ciudad de Panam&aacute;\n\n🚗 Estacionamiento disponible\n🚇 Cerca de la estaci&oacute;n El Carmen\n\n&iquest;Necesita indicaciones por Google Maps?',['Ver en Maps','Agendar cita','Horario']],
+  'emergencia':['&iexcl;Entendemos la urgencia! Para emergencias dentales:\n\n📞 Llame al: 6804-0864\n⏰ Atendemos emergencias de L-V hasta las 8 PM\n\nSi es fuera de horario, deje un mensaje y le llamamos a primera hora.',['Llamar ahora','Horario','Precios']],
+  'default':['Gracias por su mensaje. Puedo ayudarle con:\n\n1. 📅 Agendar una cita\n2. 💰 Informaci&oacute;n de precios\n3. 🕐 Horarios de atenci&oacute;n\n4. 📍 Ubicaci&oacute;n\n5. 🚨 Emergencias dentales\n\n&iquest;Qu&eacute; necesita?',['Agendar cita','Precios','Horario','Ubicaci&oacute;n']]
+};
+
+function getResponse(msg){
+  const m=msg.toLowerCase();
+  if(m.includes('horario')||m.includes('hora')||m.includes('abierto')) return responses.horario;
+  if(m.includes('cita')||m.includes('agendar')||m.includes('reservar')||m.includes('mañana')||m.includes('tarde')) return responses.cita;
+  if(m.includes('precio')||m.includes('costo')||m.includes('cuanto')||m.includes('cuánto')||m.includes('servicio')) return responses.precio;
+  if(m.includes('donde')||m.includes('dónde')||m.includes('ubica')||m.includes('direcc')||m.includes('maps')) return responses.ubicacion;
+  if(m.includes('emergencia')||m.includes('dolor')||m.includes('urgente')) return responses.emergencia;
+  return responses.default;
+}
+
+function addMsg(text,isUser=false){
+  const div=document.createElement('div');
+  div.className=`msg ${isUser?'msg-user':'msg-bot'}`;
+  div.innerHTML=text.replace(/\n/g,'<br>');
+  chatEl.appendChild(div);
+  chatEl.scrollTop=chatEl.scrollHeight;
+  msgCount++;
+  document.getElementById('stat-msgs').textContent=msgCount;
+}
+
+function showTyping(){
+  const div=document.createElement('div');
+  div.className='msg msg-bot typing';
+  div.id='typing';
+  div.innerHTML='<span></span> <span></span> <span></span>';
+  chatEl.appendChild(div);
+  chatEl.scrollTop=chatEl.scrollHeight;
+}
+
+function hideTyping(){const t=document.getElementById('typing');if(t)t.remove()}
+
+function showQuickReplies(replies){
+  quickEl.innerHTML=replies.map(r=>`<button class="quick-btn" onclick="sendQuick('${r}')">${r}</button>`).join('');
+}
+
+function sendMessage(){
+  const msg=inputEl.value.trim();
+  if(!msg)return;
+  addMsg(msg,true);
+  inputEl.value='';
+  quickEl.innerHTML='';
+  showTyping();
+  setTimeout(()=>{
+    hideTyping();
+    const [resp,quick]=getResponse(msg);
+    addMsg(resp);
+    if(quick)showQuickReplies(quick);
+  },800+Math.random()*600);
+}
+
+function sendQuick(text){
+  inputEl.value=text;
+  sendMessage();
+}
+
+// Initial greeting
+setTimeout(()=>{
+  addMsg('&iexcl;Hola! 👋 Bienvenido a Cl&iacute;nica Dental Sonrisa.\n\nSoy su asistente virtual disponible 24/7. &iquest;En qu&eacute; puedo ayudarle hoy?');
+  showQuickReplies(['Agendar cita','Precios','Horario','Ubicaci&oacute;n']);
+},500);
+</script>
+</body>
+</html>

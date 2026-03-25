@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SolCode - Portfolio de Demos</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+body{font-family:'Inter',sans-serif;background:#0a0a0a;color:#fff}
+.card{background:linear-gradient(145deg,rgba(25,25,35,0.9),rgba(15,15,20,0.95));border:1px solid rgba(200,164,92,0.15);border-radius:16px;transition:all .4s}
+.card:hover{border-color:#c8a45c;transform:translateY(-6px);box-shadow:0 20px 40px rgba(200,164,92,0.12)}
+.gold{color:#c8a45c}
+.gold-bg{background:#c8a45c}
+@keyframes fadeUp{from{opacity:0;transform:translateY(30px)}to{opacity:1;transform:translateY(0)}}
+.fade-up{animation:fadeUp .8s ease-out both}
+</style>
+</head>
+<body>
+<div class="max-w-6xl mx-auto px-6 py-16">
+  <div class="text-center mb-16 fade-up">
+    <div class="inline-flex items-center gap-3 mb-4">
+      <div class="w-12 h-12 rounded-full gold-bg flex items-center justify-center"><span class="text-black font-bold text-xl">S</span></div>
+      <span class="text-3xl font-bold">Sol<span class="gold">Code</span></span>
+    </div>
+    <p class="text-gray-400 text-lg">Soluciones Digitales con Inteligencia Artificial</p>
+    <p class="text-gray-500 text-sm mt-2">WhatsApp: 6804-0864 | Ciudad de Panam&aacute;</p>
+  </div>
+
+  <div class="grid md:grid-cols-2 gap-6">
+    <a href="restaurant.html" class="card p-8 block fade-up" style="animation-delay:.1s">
+      <div class="text-4xl mb-4">🍽️</div>
+      <h3 class="text-xl font-bold mb-2">Restaurante / Supermercado</h3>
+      <p class="text-gray-400 text-sm mb-4">Men&uacute; digital interactivo con categor&iacute;as, pedidos por WhatsApp y reservaciones en l&iacute;nea.</p>
+      <span class="text-sm gold font-medium">Ver Demo →</span>
+    </a>
+
+    <a href="chatbot.html" class="card p-8 block fade-up" style="animation-delay:.2s">
+      <div class="text-4xl mb-4">🤖</div>
+      <h3 class="text-xl font-bold mb-2">Chatbot IA - Atenci&oacute;n 24/7</h3>
+      <p class="text-gray-400 text-sm mb-4">Asistente inteligente que responde preguntas, agenda citas y captura clientes autom&aacute;ticamente.</p>
+      <span class="text-sm gold font-medium">Ver Demo →</span>
+    </a>
+
+    <a href="dashboard.html" class="card p-8 block fade-up" style="animation-delay:.3s">
+      <div class="text-4xl mb-4">📊</div>
+      <h3 class="text-xl font-bold mb-2">Panel Administrativo</h3>
+      <p class="text-gray-400 text-sm mb-4">Dashboard con gr&aacute;ficos en tiempo real, gesti&oacute;n de inventario, ventas y reportes autom&aacute;ticos.</p>
+      <span class="text-sm gold font-medium">Ver Demo →</span>
+    </a>
+
+    <a href="tienda.html" class="card p-8 block fade-up" style="animation-delay:.4s">
+      <div class="text-4xl mb-4">🛒</div>
+      <h3 class="text-xl font-bold mb-2">Tienda en L&iacute;nea</h3>
+      <p class="text-gray-400 text-sm mb-4">E-commerce completo con carrito de compras, filtros de productos, checkout y pasarela de pago.</p>
+      <span class="text-sm gold font-medium">Ver Demo →</span>
+    </a>
+
+    <a href="https://edwinzhu68-ops.github.io/royal-village-demo/" class="card p-8 block fade-up" style="animation-delay:.5s">
+      <div class="text-4xl mb-4">🏠</div>
+      <h3 class="text-xl font-bold mb-2">Bienes Ra&iacute;ces</h3>
+      <p class="text-gray-400 text-sm mb-4">P&aacute;gina de lujo para proyectos inmobiliarios con galer&iacute;a, mapa interactivo y formulario de contacto.</p>
+      <span class="text-sm gold font-medium">Ver Demo →</span>
+    </a>
+
+    <div class="card p-8 border-dashed fade-up" style="animation-delay:.6s">
+      <div class="text-4xl mb-4">💡</div>
+      <h3 class="text-xl font-bold mb-2">&iquest;Tiene otra idea?</h3>
+      <p class="text-gray-400 text-sm mb-4">Cu&eacute;ntenos su proyecto. Creamos soluciones a medida para cualquier tipo de negocio.</p>
+      <span class="text-sm gold font-medium">WhatsApp: 6804-0864</span>
+    </div>
+  </div>
+
+  <div class="text-center mt-16 text-gray-600 text-sm">
+    &copy; 2025 SolCode — Desarrollo con Inteligencia Artificial
+  </div>
+</div>
+</body>
+</html>

@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>La Parrilla Dorada - Restaurante Demo</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Inter',sans-serif;background:#111;color:#fff}
+.font-serif{font-family:'Playfair Display',serif}
+.hero{height:80vh;background:linear-gradient(rgba(0,0,0,.55),rgba(0,0,0,.7)),url('https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=1600&q=80') center/cover;display:flex;align-items:center;justify-content:center}
+.cat-btn{padding:8px 20px;border-radius:30px;font-size:14px;cursor:pointer;transition:all .3s;border:1px solid #333;background:transparent;color:#ccc}
+.cat-btn.active,.cat-btn:hover{background:#e63946;border-color:#e63946;color:#fff}
+.menu-card{background:#1a1a1a;border-radius:16px;overflow:hidden;transition:all .4s}
+.menu-card:hover{transform:translateY(-5px);box-shadow:0 15px 40px rgba(230,57,70,.15)}
+.menu-card img{height:200px;width:100%;object-fit:cover;transition:transform .5s}
+.menu-card:hover img{transform:scale(1.08)}
+.wa-float{position:fixed;bottom:24px;right:24px;width:60px;height:60px;background:#25d366;border-radius:50%;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 20px rgba(37,211,102,.4);z-index:99;animation:bounce 2s infinite}
+@keyframes bounce{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
+.badge{background:#e63946;color:#fff;font-size:11px;padding:3px 10px;border-radius:20px;position:absolute;top:12px;right:12px}
+</style>
+</head>
+<body>
+
+<!-- Nav -->
+<nav class="fixed top-0 w-full z-50 bg-black/80 backdrop-blur-xl border-b border-white/5">
+  <div class="max-w-6xl mx-auto px-6 py-4 flex justify-between items-center">
+    <div>
+      <span class="font-serif text-xl font-bold text-[#e63946]">La Parrilla</span>
+      <span class="font-serif text-xl font-bold text-white"> Dorada</span>
+    </div>
+    <div class="hidden md:flex gap-6 text-sm text-gray-300">
+      <a href="#menu" class="hover:text-white">Men&uacute;</a>
+      <a href="#about" class="hover:text-white">Nosotros</a>
+      <a href="#reservar" class="hover:text-white">Reservar</a>
+    </div>
+    <a href="#reservar" class="px-5 py-2 bg-[#e63946] rounded-full text-sm font-semibold hover:bg-red-600 transition">Reservar Mesa</a>
+  </div>
+</nav>
+
+<!-- Hero -->
+<section class="hero text-center px-4">
+  <div>
+    <p class="text-[#e63946] text-sm tracking-[4px] uppercase mb-4">Restaurante &amp; Parrilla</p>
+    <h1 class="font-serif text-5xl md:text-7xl font-bold mb-4">La Parrilla Dorada</h1>
+    <p class="text-gray-300 text-lg mb-8 max-w-md mx-auto">La mejor carne a la parrilla en Ciudad de Panam&aacute;</p>
+    <div class="flex gap-4 justify-center">
+      <a href="#menu" class="px-8 py-3 bg-[#e63946] rounded-full font-semibold hover:bg-red-600 transition">Ver Men&uacute;</a>
+      <a href="https://wa.me/50768040864" class="px-8 py-3 border-2 border-white/30 rounded-full font-semibold hover:bg-white/10 transition">Pedir por WhatsApp</a>
+    </div>
+  </div>
+</section>
+
+<!-- Stats -->
+<section class="py-12 border-b border-white/5">
+  <div class="max-w-4xl mx-auto px-6 grid grid-cols-3 text-center gap-4">
+    <div><div class="text-3xl font-bold text-[#e63946]">4.8★</div><p class="text-gray-500 text-sm mt-1">Google Reviews</p></div>
+    <div><div class="text-3xl font-bold text-[#e63946]">12+</div><p class="text-gray-500 text-sm mt-1">A&ntilde;os de Servicio</p></div>
+    <div><div class="text-3xl font-bold text-[#e63946]">50+</div><p class="text-gray-500 text-sm mt-1">Platos</p></div>
+  </div>
+</section>
+
+<!-- Menu -->
+<section id="menu" class="py-20 px-6">
+  <div class="max-w-6xl mx-auto">
+    <div class="text-center mb-12">
+      <p class="text-[#e63946] text-sm tracking-[3px] uppercase mb-2">Nuestro</p>
+      <h2 class="font-serif text-4xl font-bold">Men&uacute;</h2>
+    </div>
+
+    <div class="flex flex-wrap gap-3 justify-center mb-10" id="cat-filters">
+      <button class="cat-btn active" onclick="filterMenu('all',this)">Todos</button>
+      <button class="cat-btn" onclick="filterMenu('parrilla',this)">Parrilla</button>
+      <button class="cat-btn" onclick="filterMenu('mariscos',this)">Mariscos</button>
+      <button class="cat-btn" onclick="filterMenu('bebidas',this)">Bebidas</button>
+      <button class="cat-btn" onclick="filterMenu('postres',this)">Postres</button>
+    </div>
+
+    <div class="grid md:grid-cols-3 gap-6" id="menu-grid">
+    </div>
+  </div>
+</section>
+
+<!-- Reservation -->
+<section id="reservar" class="py-20 px-6 bg-gradient-to-b from-transparent via-[#e63946]/5 to-transparent">
+  <div class="max-w-2xl mx-auto">
+    <div class="text-center mb-10">
+      <p class="text-[#e63946] text-sm tracking-[3px] uppercase mb-2">Reserve su mesa</p>
+      <h2 class="font-serif text-4xl font-bold">Reservaci&oacute;n</h2>
+    </div>
+    <form class="space-y-4 bg-[#1a1a1a] p-8 rounded-2xl border border-white/5" onsubmit="event.preventDefault();alert('Reservaci&oacute;n confirmada!')">
+      <div class="grid grid-cols-2 gap-4">
+        <input type="text" placeholder="Nombre" class="w-full p-4 bg-white/5 border border-white/10 rounded-xl text-white outline-none focus:border-[#e63946]" required>
+        <input type="tel" placeholder="Tel&eacute;fono" class="w-full p-4 bg-white/5 border border-white/10 rounded-xl text-white outline-none focus:border-[#e63946]" required>
+      </div>
+      <div class="grid grid-cols-2 gap-4">
+        <input type="date" class="w-full p-4 bg-white/5 border border-white/10 rounded-xl text-white outline-none focus:border-[#e63946]" required>
+        <select class="w-full p-4 bg-white/5 border border-white/10 rounded-xl text-gray-300 outline-none focus:border-[#e63946]">
+          <option>2 personas</option><option>4 personas</option><option>6 personas</option><option>8+ personas</option>
+        </select>
+      </div>
+      <textarea placeholder="Notas especiales" rows="3" class="w-full p-4 bg-white/5 border border-white/10 rounded-xl text-white outline-none focus:border-[#e63946] resize-none"></textarea>
+      <button type="submit" class="w-full py-4 bg-[#e63946] rounded-xl font-semibold text-lg hover:bg-red-600 transition">Confirmar Reservaci&oacute;n</button>
+    </form>
+  </div>
+</section>
+
+<!-- Footer -->
+<footer class="py-10 border-t border-white/5 text-center text-gray-500 text-sm">
+  <p class="font-serif text-lg text-white mb-2">La Parrilla Dorada</p>
+  <p>Calle 50, Bella Vista, Ciudad de Panam&aacute;</p>
+  <p class="mt-2">Lunes a S&aacute;bado: 11:00 AM - 11:00 PM | Domingo: 12:00 PM - 9:00 PM</p>
+  <p class="mt-4 text-gray-600">Demo creado por <span class="text-[#c8a45c]">SolCode</span></p>
+</footer>
+
+<a href="https://wa.me/50768040864" class="wa-float" target="_blank">
+  <svg class="w-8 h-8 text-white" fill="currentColor" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.625.846 5.059 2.284 7.034L.789 23.492l4.573-1.456A11.93 11.93 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 21.75c-2.15 0-4.148-.672-5.791-1.82l-.414-.272-3.105.99.98-3.026-.287-.431A9.72 9.72 0 012.25 12c0-5.385 4.365-9.75 9.75-9.75s9.75 4.365 9.75 9.75-4.365 9.75-9.75 9.75z"/></svg>
+</a>
+
+<script>
+const menuItems = [
+  {name:"Churrasco Premium",desc:"500g de carne premium a la parrilla con chimichurri",price:28.99,cat:"parrilla",img:"https://images.unsplash.com/photo-1544025162-d76694265947?w=500&q=80",popular:true},
+  {name:"Costillas BBQ",desc:"Rack completo de costillas con salsa BBQ ahumada",price:24.99,cat:"parrilla",img:"https://images.unsplash.com/photo-1529193591184-b1d58069ecdd?w=500&q=80",popular:true},
+  {name:"Pollo a la Brasa",desc:"Medio pollo marinado con hierbas y especias",price:14.99,cat:"parrilla",img:"https://images.unsplash.com/photo-1598103442097-8b74394b95c6?w=500&q=80"},
+  {name:"Chorizo Argentino",desc:"Trio de chorizos con ensalada criolla",price:12.99,cat:"parrilla",img:"https://images.unsplash.com/photo-1555939594-58d7cb561ad1?w=500&q=80"},
+  {name:"Ceviche Mixto",desc:"Corvina y camarones en leche de tigre con camote",price:18.99,cat:"mariscos",img:"https://images.unsplash.com/photo-1535399831218-d5bd36d1a6b3?w=500&q=80",popular:true},
+  {name:"Camarones al Ajillo",desc:"Camarones jumbo salteados en mantequilla y ajo",price:22.99,cat:"mariscos",img:"https://images.unsplash.com/photo-1625943553852-781c6dd46faa?w=500&q=80"},
+  {name:"Mojito Cl&aacute;sico",desc:"Ron blanco, hierba buena, lim&oacute;n y soda",price:8.99,cat:"bebidas",img:"https://images.unsplash.com/photo-1551538827-9c037cb4f32a?w=500&q=80"},
+  {name:"Limonada de Maracuy&aacute;",desc:"Limonada natural con pulpa de maracuy&aacute;",price:4.99,cat:"bebidas",img:"https://images.unsplash.com/photo-1621263764928-df1444c5e859?w=500&q=80"},
+  {name:"Tres Leches",desc:"Pastel cl&aacute;sico de tres leches con canela",price:7.99,cat:"postres",img:"https://images.unsplash.com/photo-1571877227200-a0d98ea607e9?w=500&q=80"},
+  {name:"Flan de Coco",desc:"Flan casero de coco con caramelo",price:6.99,cat:"postres",img:"https://images.unsplash.com/photo-1624353365286-3f8d62daad51?w=500&q=80"},
+];
+
+function renderMenu(filter='all'){
+  const grid=document.getElementById('menu-grid');
+  const items=filter==='all'?menuItems:menuItems.filter(i=>i.cat===filter);
+  grid.innerHTML=items.map(i=>`
+    <div class="menu-card">
+      <div class="relative"><img src="${i.img}" alt="${i.name}">${i.popular?'<span class="badge">Popular</span>':''}</div>
+      <div class="p-5">
+        <div class="flex justify-between items-start mb-2">
+          <h4 class="font-bold text-lg">${i.name}</h4>
+          <span class="text-[#e63946] font-bold text-lg">$${i.price}</span>
+        </div>
+        <p class="text-gray-400 text-sm mb-4">${i.desc}</p>
+        <button onclick="addToOrder('${i.name}',${i.price})" class="w-full py-2.5 bg-white/5 border border-white/10 rounded-xl text-sm hover:bg-[#e63946] hover:border-[#e63946] transition">Agregar al Pedido</button>
+      </div>
+    </div>`).join('');
+}
+
+function filterMenu(cat,btn){
+  document.querySelectorAll('.cat-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  renderMenu(cat);
+}
+
+let order=[];
+function addToOrder(name,price){
+  order.push({name,price});
+  const total=order.reduce((s,i)=>s+i.price,0).toFixed(2);
+  const msg=order.map(i=>i.name).join(', ');
+  if(confirm(`${name} agregado! Total: $${total}\n\nPedido: ${msg}\n\nEnviar por WhatsApp?`)){
+    window.open(`https://wa.me/50768040864?text=Hola! Quiero pedir: ${encodeURIComponent(msg)}. Total: $${total}`);
+  }
+}
+
+renderMenu();
+</script>
+</body>
+</html>
