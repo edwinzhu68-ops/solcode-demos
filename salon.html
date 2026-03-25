@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bella Salon - Demo Reservaciones</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<style>
+body{font-family:system-ui,sans-serif;background:#fdf6f0;color:#333}
+.service-card{background:#fff;border-radius:16px;padding:20px;border:2px solid transparent;cursor:pointer;transition:all .3s}
+.service-card:hover,.service-card.selected{border-color:#d4618c;box-shadow:0 8px 25px rgba(212,97,140,.15)}
+.service-card.selected::after{content:'✓';position:absolute;top:10px;right:14px;background:#d4618c;color:#fff;width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px}
+.time-slot{padding:10px 16px;border-radius:10px;border:1px solid #e5d5c5;cursor:pointer;transition:all .2s;font-size:13px;text-align:center}
+.time-slot:hover,.time-slot.selected{background:#d4618c;color:#fff;border-color:#d4618c}
+.time-slot.taken{opacity:.3;pointer-events:none;text-decoration:line-through}
+.step{display:none}.step.active{display:block}
+.progress-dot{width:12px;height:12px;border-radius:50%;background:#ddd;transition:all .3s}
+.progress-dot.active{background:#d4618c;transform:scale(1.3)}
+.progress-dot.done{background:#22c55e}
+</style>
+</head>
+<body>
+<nav class="bg-white shadow-sm sticky top-0 z-50">
+  <div class="max-w-4xl mx-auto px-6 py-4 flex justify-between items-center">
+    <div><span class="text-2xl font-bold text-[#d4618c]">Bella</span><span class="text-2xl font-bold"> Salon</span></div>
+    <a href="https://wa.me/50768040864" class="px-4 py-2 bg-[#d4618c] text-white rounded-full text-sm font-semibold hover:bg-pink-600 transition">WhatsApp</a>
+  </div>
+</nav>
+
+<!-- Hero -->
+<section class="text-center py-16 px-4">
+  <p class="text-[#d4618c] text-sm tracking-widest uppercase mb-2">Salon &amp; Spa</p>
+  <h1 class="text-4xl md:text-5xl font-bold mb-4">Reserve su Cita Online</h1>
+  <p class="text-gray-500 max-w-md mx-auto">Seleccione servicio, profesional, fecha y hora. Confirmaci&oacute;n instant&aacute;nea.</p>
+</section>
+
+<!-- Progress -->
+<div class="flex justify-center gap-4 items-center mb-8">
+  <div class="progress-dot active" id="dot-0"></div>
+  <div class="w-12 h-0.5 bg-gray-200"></div>
+  <div class="progress-dot" id="dot-1"></div>
+  <div class="w-12 h-0.5 bg-gray-200"></div>
+  <div class="progress-dot" id="dot-2"></div>
+  <div class="w-12 h-0.5 bg-gray-200"></div>
+  <div class="progress-dot" id="dot-3"></div>
+</div>
+
+<div class="max-w-4xl mx-auto px-6 pb-20">
+
+  <!-- Step 1: Services -->
+  <div class="step active" id="step-0">
+    <h2 class="text-xl font-bold mb-6 text-center">1. Seleccione su servicio</h2>
+    <div class="grid md:grid-cols-3 gap-4" id="services-grid"></div>
+    <div class="text-center mt-8">
+      <button onclick="nextStep()" class="px-8 py-3 bg-[#d4618c] text-white rounded-full font-semibold hover:bg-pink-600 transition" id="btn-next-0">Seleccione un servicio</button>
+    </div>
+  </div>
+
+  <!-- Step 2: Professional -->
+  <div class="step" id="step-1">
+    <h2 class="text-xl font-bold mb-6 text-center">2. Elija su profesional</h2>
+    <div class="grid md:grid-cols-3 gap-4" id="pros-grid"></div>
+    <div class="flex justify-center gap-4 mt-8">
+      <button onclick="prevStep()" class="px-6 py-3 border border-gray-300 rounded-full text-sm hover:bg-gray-50">Atr&aacute;s</button>
+      <button onclick="nextStep()" class="px-8 py-3 bg-[#d4618c] text-white rounded-full font-semibold hover:bg-pink-600 transition">Continuar</button>
+    </div>
+  </div>
+
+  <!-- Step 3: Date & Time -->
+  <div class="step" id="step-2">
+    <h2 class="text-xl font-bold mb-6 text-center">3. Fecha y hora</h2>
+    <div class="bg-white rounded-2xl p-6 shadow-sm mb-6">
+      <label class="text-sm text-gray-500 mb-2 block">Seleccione fecha:</label>
+      <input type="date" id="date-input" class="w-full p-3 border rounded-xl mb-4 outline-none focus:border-[#d4618c]" onchange="generateTimes()">
+      <div class="grid grid-cols-4 md:grid-cols-6 gap-2" id="times-grid"></div>
+    </div>
+    <div class="flex justify-center gap-4 mt-8">
+      <button onclick="prevStep()" class="px-6 py-3 border border-gray-300 rounded-full text-sm hover:bg-gray-50">Atr&aacute;s</button>
+      <button onclick="nextStep()" class="px-8 py-3 bg-[#d4618c] text-white rounded-full font-semibold hover:bg-pink-600 transition">Continuar</button>
+    </div>
+  </div>
+
+  <!-- Step 4: Confirm -->
+  <div class="step" id="step-3">
+    <h2 class="text-xl font-bold mb-6 text-center">4. Confirmar reservaci&oacute;n</h2>
+    <div class="bg-white rounded-2xl p-8 shadow-sm max-w-md mx-auto">
+      <div class="space-y-4 mb-6" id="summary"></div>
+      <input type="text" placeholder="Su nombre" class="w-full p-3 border rounded-xl mb-3 outline-none focus:border-[#d4618c]" id="client-name">
+      <input type="tel" placeholder="Su tel&eacute;fono" class="w-full p-3 border rounded-xl mb-3 outline-none focus:border-[#d4618c]" id="client-phone">
+      <button onclick="confirm()" class="w-full py-3 bg-[#d4618c] text-white rounded-xl font-semibold hover:bg-pink-600 transition text-lg">Confirmar Cita</button>
+    </div>
+    <div class="flex justify-center mt-4">
+      <button onclick="prevStep()" class="px-6 py-3 border border-gray-300 rounded-full text-sm hover:bg-gray-50">Atr&aacute;s</button>
+    </div>
+  </div>
+</div>
+
+<footer class="text-center py-8 text-gray-400 text-sm border-t bg-white">Demo creado por <span class="text-[#d4618c] font-semibold">SolCode</span></footer>
+
+<script>
+const services=[
+  {name:'Corte de Cabello',price:15,time:'30 min',icon:'✂️'},
+  {name:'Tinte Completo',price:45,time:'90 min',icon:'🎨'},
+  {name:'Alisado Keratina',price:80,time:'120 min',icon:'💇‍♀️'},
+  {name:'Manicure & Pedicure',price:25,time:'60 min',icon:'💅'},
+  {name:'Maquillaje',price:35,time:'45 min',icon:'💄'},
+  {name:'Tratamiento Facial',price:50,time:'60 min',icon:'✨'},
+  {name:'Depilaci\u00f3n',price:20,time:'30 min',icon:'🌸'},
+  {name:'Barba & Bigote',price:10,time:'20 min',icon:'🧔'},
+  {name:'Peinado Especial',price:40,time:'60 min',icon:'👰'},
+];
+const pros=[
+  {name:'Ana Mar\u00eda',role:'Estilista Senior',rating:4.9,img:'👩‍🦰'},
+  {name:'Carlos',role:'Barbero',rating:4.8,img:'👨‍🦱'},
+  {name:'Luisa',role:'Especialista en Color',rating:4.9,img:'👩'},
+  {name:'Jenny',role:'Manicurista',rating:4.7,img:'💁‍♀️'},
+  {name:'Roberto',role:'Estilista',rating:4.6,img:'🧑‍🎨'},
+  {name:'Cualquiera',role:'Primer disponible',rating:0,img:'👥'},
+];
+
+let selected={service:null,pro:null,date:null,time:null};
+let currentStep=0;
+
+document.getElementById('services-grid').innerHTML=services.map((s,i)=>`
+  <div class="service-card relative" onclick="selectService(${i},this)">
+    <div class="text-3xl mb-2">${s.icon}</div>
+    <h4 class="font-semibold">${s.name}</h4>
+    <p class="text-gray-400 text-xs mt-1">${s.time}</p>
+    <p class="text-[#d4618c] font-bold mt-2">$${s.price}</p>
+  </div>`).join('');
+
+document.getElementById('pros-grid').innerHTML=pros.map((p,i)=>`
+  <div class="service-card relative text-center" onclick="selectPro(${i},this)">
+    <div class="text-4xl mb-2">${p.img}</div>
+    <h4 class="font-semibold">${p.name}</h4>
+    <p class="text-gray-400 text-xs">${p.role}</p>
+    ${p.rating?`<p class="text-amber-500 text-sm mt-1">★ ${p.rating}</p>`:''}
+  </div>`).join('');
+
+// Set default date to tomorrow
+const tomorrow=new Date();tomorrow.setDate(tomorrow.getDate()+1);
+document.getElementById('date-input').value=tomorrow.toISOString().split('T')[0];
+document.getElementById('date-input').min=tomorrow.toISOString().split('T')[0];
+
+function selectService(i,el){
+  document.querySelectorAll('#services-grid .service-card').forEach(c=>c.classList.remove('selected'));
+  el.classList.add('selected');
+  selected.service=services[i];
+  document.getElementById('btn-next-0').textContent='Continuar →';
+}
+function selectPro(i,el){
+  document.querySelectorAll('#pros-grid .service-card').forEach(c=>c.classList.remove('selected'));
+  el.classList.add('selected');
+  selected.pro=pros[i];
+}
+function generateTimes(){
+  const taken=[3,5,8];
+  const grid=document.getElementById('times-grid');
+  grid.innerHTML='';
+  for(let h=8;h<=18;h++){
+    for(let m=0;m<60;m+=30){
+      const idx=(h-8)*2+(m/30);
+      const t=`${h.toString().padStart(2,'0')}:${m.toString().padStart(2,'0')}`;
+      const isTaken=taken.includes(idx);
+      grid.innerHTML+=`<div class="time-slot${isTaken?' taken':''}" onclick="selectTime('${t}',this)">${t}</div>`;
+    }
+  }
+}
+generateTimes();
+
+function selectTime(t,el){
+  document.querySelectorAll('.time-slot').forEach(s=>s.classList.remove('selected'));
+  el.classList.add('selected');
+  selected.time=t;
+  selected.date=document.getElementById('date-input').value;
+}
+
+function nextStep(){
+  if(currentStep===0&&!selected.service)return alert('Seleccione un servicio');
+  if(currentStep===2&&!selected.time)return alert('Seleccione una hora');
+  if(currentStep===3)return;
+  document.getElementById(`step-${currentStep}`).classList.remove('active');
+  document.getElementById(`dot-${currentStep}`).classList.remove('active');
+  document.getElementById(`dot-${currentStep}`).classList.add('done');
+  currentStep++;
+  document.getElementById(`step-${currentStep}`).classList.add('active');
+  document.getElementById(`dot-${currentStep}`).classList.add('active');
+  if(currentStep===3)showSummary();
+}
+function prevStep(){
+  document.getElementById(`step-${currentStep}`).classList.remove('active');
+  document.getElementById(`dot-${currentStep}`).classList.remove('active');
+  currentStep--;
+  document.getElementById(`step-${currentStep}`).classList.add('active');
+  document.getElementById(`dot-${currentStep}`).classList.add('active');
+  document.getElementById(`dot-${currentStep}`).classList.remove('done');
+}
+function showSummary(){
+  document.getElementById('summary').innerHTML=`
+    <div class="flex justify-between py-3 border-b"><span class="text-gray-500">Servicio</span><span class="font-semibold">${selected.service.name}</span></div>
+    <div class="flex justify-between py-3 border-b"><span class="text-gray-500">Profesional</span><span class="font-semibold">${selected.pro?selected.pro.name:'Cualquiera'}</span></div>
+    <div class="flex justify-between py-3 border-b"><span class="text-gray-500">Fecha</span><span class="font-semibold">${selected.date}</span></div>
+    <div class="flex justify-between py-3 border-b"><span class="text-gray-500">Hora</span><span class="font-semibold">${selected.time}</span></div>
+    <div class="flex justify-between py-3 border-b"><span class="text-gray-500">Duraci\u00f3n</span><span class="font-semibold">${selected.service.time}</span></div>
+    <div class="flex justify-between py-3 text-lg"><span class="font-bold">Total</span><span class="font-bold text-[#d4618c]">$${selected.service.price}</span></div>`;
+}
+function confirm(){
+  const name=document.getElementById('client-name').value;
+  const phone=document.getElementById('client-phone').value;
+  if(!name||!phone)return alert('Complete su nombre y tel\u00e9fono');
+  alert(`¡Cita confirmada!\n\n${name}\n${selected.service.name} con ${selected.pro?selected.pro.name:'primer disponible'}\n${selected.date} a las ${selected.time}\nTotal: $${selected.service.price}\n\nLe enviaremos confirmaci\u00f3n por WhatsApp.`);
+}
+</script>
+</body>
+</html>

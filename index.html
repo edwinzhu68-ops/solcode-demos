@@ -8,12 +8,13 @@
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <style>
 body{font-family:'Inter',sans-serif;background:#0a0a0a;color:#fff}
-.card{background:linear-gradient(145deg,rgba(25,25,35,0.9),rgba(15,15,20,0.95));border:1px solid rgba(200,164,92,0.15);border-radius:16px;transition:all .4s}
+.card{background:linear-gradient(145deg,rgba(25,25,35,0.9),rgba(15,15,20,0.95));border:1px solid rgba(200,164,92,0.15);border-radius:16px;transition:all .4s;display:block}
 .card:hover{border-color:#c8a45c;transform:translateY(-6px);box-shadow:0 20px 40px rgba(200,164,92,0.12)}
 .gold{color:#c8a45c}
 .gold-bg{background:#c8a45c}
 @keyframes fadeUp{from{opacity:0;transform:translateY(30px)}to{opacity:1;transform:translateY(0)}}
 .fade-up{animation:fadeUp .8s ease-out both}
+.tag{font-size:10px;padding:3px 10px;border-radius:20px;font-weight:600}
 </style>
 </head>
 <body>
@@ -25,54 +26,89 @@ body{font-family:'Inter',sans-serif;background:#0a0a0a;color:#fff}
     </div>
     <p class="text-gray-400 text-lg">Soluciones Digitales con Inteligencia Artificial</p>
     <p class="text-gray-500 text-sm mt-2">WhatsApp: 6804-0864 | Ciudad de Panam&aacute;</p>
+    <p class="mt-4 text-sm"><span class="tag bg-emerald-500/20 text-emerald-400">Con IA entregamos en 3-5 d&iacute;as</span></p>
   </div>
 
-  <div class="grid md:grid-cols-2 gap-6">
-    <a href="restaurant.html" class="card p-8 block fade-up" style="animation-delay:.1s">
-      <div class="text-4xl mb-4">🍽️</div>
-      <h3 class="text-xl font-bold mb-2">Restaurante / Supermercado</h3>
-      <p class="text-gray-400 text-sm mb-4">Men&uacute; digital interactivo con categor&iacute;as, pedidos por WhatsApp y reservaciones en l&iacute;nea.</p>
-      <span class="text-sm gold font-medium">Ver Demo →</span>
+  <p class="text-gray-500 text-xs uppercase tracking-widest mb-6 fade-up">Demos en vivo — haga clic para explorar</p>
+
+  <div class="grid md:grid-cols-3 gap-5">
+
+    <a href="salon.html" class="card p-7 fade-up" style="animation-delay:.05s">
+      <div class="flex justify-between items-start mb-3"><span class="text-3xl">💈</span><span class="tag bg-pink-500/20 text-pink-400">Alta demanda</span></div>
+      <h3 class="text-lg font-bold mb-1">Sal&oacute;n de Belleza / Barbería</h3>
+      <p class="text-gray-400 text-sm">Reservas online paso a paso, selecci&oacute;n de profesional, calendario y confirmaci&oacute;n instant&aacute;nea.</p>
     </a>
 
-    <a href="chatbot.html" class="card p-8 block fade-up" style="animation-delay:.2s">
-      <div class="text-4xl mb-4">🤖</div>
-      <h3 class="text-xl font-bold mb-2">Chatbot IA - Atenci&oacute;n 24/7</h3>
-      <p class="text-gray-400 text-sm mb-4">Asistente inteligente que responde preguntas, agenda citas y captura clientes autom&aacute;ticamente.</p>
-      <span class="text-sm gold font-medium">Ver Demo →</span>
+    <a href="restaurant.html" class="card p-7 fade-up" style="animation-delay:.1s">
+      <div class="flex justify-between items-start mb-3"><span class="text-3xl">🍽️</span><span class="tag bg-red-500/20 text-red-400">Popular</span></div>
+      <h3 class="text-lg font-bold mb-1">Restaurante / Supermercado</h3>
+      <p class="text-gray-400 text-sm">Men&uacute; digital con categor&iacute;as, pedidos por WhatsApp y sistema de reservaciones.</p>
     </a>
 
-    <a href="dashboard.html" class="card p-8 block fade-up" style="animation-delay:.3s">
-      <div class="text-4xl mb-4">📊</div>
-      <h3 class="text-xl font-bold mb-2">Panel Administrativo</h3>
-      <p class="text-gray-400 text-sm mb-4">Dashboard con gr&aacute;ficos en tiempo real, gesti&oacute;n de inventario, ventas y reportes autom&aacute;ticos.</p>
-      <span class="text-sm gold font-medium">Ver Demo →</span>
+    <a href="tienda.html" class="card p-7 fade-up" style="animation-delay:.15s">
+      <div class="flex justify-between items-start mb-3"><span class="text-3xl">🛒</span><span class="tag bg-blue-500/20 text-blue-400">E-commerce</span></div>
+      <h3 class="text-lg font-bold mb-1">Tienda en L&iacute;nea</h3>
+      <p class="text-gray-400 text-sm">Carrito de compras, b&uacute;squeda, filtros, descuentos y checkout por WhatsApp o pago online.</p>
     </a>
 
-    <a href="tienda.html" class="card p-8 block fade-up" style="animation-delay:.4s">
-      <div class="text-4xl mb-4">🛒</div>
-      <h3 class="text-xl font-bold mb-2">Tienda en L&iacute;nea</h3>
-      <p class="text-gray-400 text-sm mb-4">E-commerce completo con carrito de compras, filtros de productos, checkout y pasarela de pago.</p>
-      <span class="text-sm gold font-medium">Ver Demo →</span>
+    <a href="chatbot.html" class="card p-7 fade-up" style="animation-delay:.2s">
+      <div class="flex justify-between items-start mb-3"><span class="text-3xl">🤖</span><span class="tag bg-purple-500/20 text-purple-400">IA</span></div>
+      <h3 class="text-lg font-bold mb-1">Chatbot IA — Atenci&oacute;n 24/7</h3>
+      <p class="text-gray-400 text-sm">Asistente inteligente para cualquier negocio. Responde, agenda y captura clientes autom&aacute;ticamente.</p>
     </a>
 
-    <a href="https://edwinzhu68-ops.github.io/royal-village-demo/" class="card p-8 block fade-up" style="animation-delay:.5s">
-      <div class="text-4xl mb-4">🏠</div>
-      <h3 class="text-xl font-bold mb-2">Bienes Ra&iacute;ces</h3>
-      <p class="text-gray-400 text-sm mb-4">P&aacute;gina de lujo para proyectos inmobiliarios con galer&iacute;a, mapa interactivo y formulario de contacto.</p>
-      <span class="text-sm gold font-medium">Ver Demo →</span>
+    <a href="hotel.html" class="card p-7 fade-up" style="animation-delay:.25s">
+      <div class="flex justify-between items-start mb-3"><span class="text-3xl">🏨</span><span class="tag bg-sky-500/20 text-sky-400">Turismo</span></div>
+      <h3 class="text-lg font-bold mb-1">Hotel / Airbnb</h3>
+      <p class="text-gray-400 text-sm">Reserva de habitaciones con calendario, selecci&oacute;n de hu&eacute;spedes y servicios del hotel.</p>
     </a>
 
-    <div class="card p-8 border-dashed fade-up" style="animation-delay:.6s">
-      <div class="text-4xl mb-4">💡</div>
-      <h3 class="text-xl font-bold mb-2">&iquest;Tiene otra idea?</h3>
-      <p class="text-gray-400 text-sm mb-4">Cu&eacute;ntenos su proyecto. Creamos soluciones a medida para cualquier tipo de negocio.</p>
-      <span class="text-sm gold font-medium">WhatsApp: 6804-0864</span>
+    <a href="autos.html" class="card p-7 fade-up" style="animation-delay:.3s">
+      <div class="flex justify-between items-start mb-3"><span class="text-3xl">🚗</span><span class="tag bg-amber-500/20 text-amber-400">Automotriz</span></div>
+      <h3 class="text-lg font-bold mb-1">Venta / Alquiler de Autos</h3>
+      <p class="text-gray-400 text-sm">Cat&aacute;logo con filtros avanzados, financiamiento y consulta directa por WhatsApp.</p>
+    </a>
+
+    <a href="gym.html" class="card p-7 fade-up" style="animation-delay:.35s">
+      <div class="flex justify-between items-start mb-3"><span class="text-3xl">🏋️</span><span class="tag bg-emerald-500/20 text-emerald-400">Fitness</span></div>
+      <h3 class="text-lg font-bold mb-1">Gimnasio / Fitness</h3>
+      <p class="text-gray-400 text-sm">Planes de membres&iacute;a, horario de clases, check-in digital y gesti&oacute;n de cupos.</p>
+    </a>
+
+    <a href="dashboard.html" class="card p-7 fade-up" style="animation-delay:.4s">
+      <div class="flex justify-between items-start mb-3"><span class="text-3xl">📊</span><span class="tag bg-indigo-500/20 text-indigo-400">Admin</span></div>
+      <h3 class="text-lg font-bold mb-1">Panel Administrativo</h3>
+      <p class="text-gray-400 text-sm">Dashboard con gr&aacute;ficos, gesti&oacute;n de inventario, ventas y reportes en tiempo real.</p>
+    </a>
+
+    <a href="cursos.html" class="card p-7 fade-up" style="animation-delay:.45s">
+      <div class="flex justify-between items-start mb-3"><span class="text-3xl">📚</span><span class="tag bg-violet-500/20 text-violet-400">Educaci&oacute;n</span></div>
+      <h3 class="text-lg font-bold mb-1">Cursos en L&iacute;nea</h3>
+      <p class="text-gray-400 text-sm">Plataforma educativa con progreso, certificados, videos y sistema de pago.</p>
+    </a>
+
+    <a href="turno.html" class="card p-7 fade-up" style="animation-delay:.5s">
+      <div class="flex justify-between items-start mb-3"><span class="text-3xl">📋</span><span class="tag bg-cyan-500/20 text-cyan-400">Sistema</span></div>
+      <h3 class="text-lg font-bold mb-1">Sistema de Turnos</h3>
+      <p class="text-gray-400 text-sm">Toma de turnos digital, pantalla de llamado, panel admin y estad&iacute;sticas en vivo.</p>
+    </a>
+
+    <a href="https://edwinzhu68-ops.github.io/royal-village-demo/" class="card p-7 fade-up" style="animation-delay:.55s">
+      <div class="flex justify-between items-start mb-3"><span class="text-3xl">🏠</span><span class="tag bg-yellow-500/20 text-yellow-400">Inmobiliaria</span></div>
+      <h3 class="text-lg font-bold mb-1">Bienes Ra&iacute;ces</h3>
+      <p class="text-gray-400 text-sm">P&aacute;gina de lujo para proyectos inmobiliarios con galer&iacute;a, mapa y contacto.</p>
+    </a>
+
+    <div class="card p-7 border-dashed cursor-default fade-up" style="animation-delay:.6s">
+      <div class="text-3xl mb-3">💡</div>
+      <h3 class="text-lg font-bold mb-1">&iquest;Tiene otra idea?</h3>
+      <p class="text-gray-400 text-sm">Cu&eacute;ntenos su proyecto. Creamos soluciones a medida para cualquier negocio.</p>
+      <p class="gold text-sm font-semibold mt-3">WhatsApp: 6804-0864</p>
     </div>
   </div>
 
   <div class="text-center mt-16 text-gray-600 text-sm">
-    &copy; 2025 SolCode — Desarrollo con Inteligencia Artificial
+    &copy; 2025 SolCode — Desarrollo con Inteligencia Artificial | Ciudad de Panam&aacute;
   </div>
 </div>
 </body>

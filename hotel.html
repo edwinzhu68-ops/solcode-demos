@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Hotel Pacifico - Demo Reservaciones</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<style>
+body{font-family:system-ui,sans-serif;background:#0c1117;color:#fff}
+.room-card{background:#151c25;border:1px solid #1e2a3a;border-radius:16px;overflow:hidden;transition:all .4s}
+.room-card:hover{border-color:#3b82f6;transform:translateY(-4px);box-shadow:0 15px 40px rgba(59,130,246,.12)}
+.room-card img{height:220px;width:100%;object-fit:cover;transition:transform .5s}
+.room-card:hover img{transform:scale(1.06)}
+.amenity{display:inline-flex;align-items:center;gap:4px;padding:4px 10px;background:#1e2a3a;border-radius:8px;font-size:11px;color:#94a3b8}
+.date-input{background:#151c25;border:1px solid #1e2a3a;padding:12px 16px;border-radius:12px;color:#fff;outline:none;width:100%}
+.date-input:focus{border-color:#3b82f6}
+.guest-btn{width:32px;height:32px;border-radius:8px;border:1px solid #333;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .2s}
+.guest-btn:hover{background:#3b82f6;border-color:#3b82f6}
+</style>
+</head>
+<body>
+<nav class="fixed top-0 w-full z-50 bg-[#0c1117]/90 backdrop-blur-xl border-b border-white/5">
+  <div class="max-w-6xl mx-auto px-6 py-4 flex justify-between items-center">
+    <span class="text-xl font-bold">Hotel <span class="text-blue-400">Pac&iacute;fico</span></span>
+    <div class="hidden md:flex gap-6 text-sm text-gray-400">
+      <a href="#rooms" class="hover:text-white">Habitaciones</a>
+      <a href="#amenities" class="hover:text-white">Servicios</a>
+      <a href="#location" class="hover:text-white">Ubicaci&oacute;n</a>
+    </div>
+    <a href="#book" class="px-5 py-2 bg-blue-600 rounded-full text-sm font-semibold hover:bg-blue-700 transition">Reservar</a>
+  </div>
+</nav>
+
+<section class="h-screen flex items-center justify-center text-center px-4" style="background:linear-gradient(rgba(0,0,0,.5),rgba(12,17,23,.9)),url('https://images.unsplash.com/photo-1566073771259-6a8506099945?w=1600&q=80') center/cover">
+  <div>
+    <p class="text-blue-400 text-sm tracking-[5px] uppercase mb-4">Bienvenido al</p>
+    <h1 class="text-5xl md:text-7xl font-bold mb-4">Hotel Pac&iacute;fico</h1>
+    <p class="text-gray-400 text-lg mb-8">Lujo y confort frente al mar en Ciudad de Panam&aacute;</p>
+    <a href="#book" class="px-8 py-4 bg-blue-600 rounded-full text-lg font-semibold hover:bg-blue-700 transition inline-block">Verificar Disponibilidad</a>
+  </div>
+</section>
+
+<!-- Booking Bar -->
+<section id="book" class="max-w-5xl mx-auto -mt-12 relative z-10 px-4">
+  <div class="bg-[#151c25] border border-[#1e2a3a] rounded-2xl p-6">
+    <div class="grid md:grid-cols-4 gap-4 items-end">
+      <div><label class="text-xs text-gray-500 mb-1 block">Check-in</label><input type="date" class="date-input" id="checkin"></div>
+      <div><label class="text-xs text-gray-500 mb-1 block">Check-out</label><input type="date" class="date-input" id="checkout"></div>
+      <div>
+        <label class="text-xs text-gray-500 mb-1 block">Hu&eacute;spedes</label>
+        <div class="flex items-center gap-3 bg-[#151c25] border border-[#1e2a3a] rounded-xl p-2.5">
+          <button class="guest-btn" onclick="changeGuests(-1)">−</button>
+          <span class="flex-1 text-center font-semibold" id="guests">2</span>
+          <button class="guest-btn" onclick="changeGuests(1)">+</button>
+        </div>
+      </div>
+      <button onclick="searchRooms()" class="py-3 bg-blue-600 rounded-xl font-semibold hover:bg-blue-700 transition">Buscar</button>
+    </div>
+  </div>
+</section>
+
+<!-- Rooms -->
+<section id="rooms" class="max-w-6xl mx-auto px-6 py-20">
+  <h2 class="text-3xl font-bold text-center mb-2">Nuestras Habitaciones</h2>
+  <p class="text-gray-500 text-center mb-12">Cada habitaci&oacute;n dise&ntilde;ada para su m&aacute;ximo confort</p>
+  <div class="grid md:grid-cols-3 gap-6" id="rooms-grid"></div>
+</section>
+
+<!-- Amenities -->
+<section id="amenities" class="py-20 border-t border-white/5">
+  <div class="max-w-6xl mx-auto px-6">
+    <h2 class="text-3xl font-bold text-center mb-12">Servicios del Hotel</h2>
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-6 text-center">
+      <div class="p-6"><div class="text-4xl mb-3">🏊</div><p class="font-semibold">Piscina Infinita</p><p class="text-gray-500 text-xs mt-1">Vista al oc&eacute;ano</p></div>
+      <div class="p-6"><div class="text-4xl mb-3">🍽️</div><p class="font-semibold">Restaurante</p><p class="text-gray-500 text-xs mt-1">Cocina gourmet</p></div>
+      <div class="p-6"><div class="text-4xl mb-3">💆</div><p class="font-semibold">Spa & Wellness</p><p class="text-gray-500 text-xs mt-1">Tratamientos premium</p></div>
+      <div class="p-6"><div class="text-4xl mb-3">🏋️</div><p class="font-semibold">Gimnasio</p><p class="text-gray-500 text-xs mt-1">Equipos modernos</p></div>
+      <div class="p-6"><div class="text-4xl mb-3">🅿️</div><p class="font-semibold">Estacionamiento</p><p class="text-gray-500 text-xs mt-1">Gratuito</p></div>
+      <div class="p-6"><div class="text-4xl mb-3">📶</div><p class="font-semibold">WiFi Premium</p><p class="text-gray-500 text-xs mt-1">Alta velocidad</p></div>
+      <div class="p-6"><div class="text-4xl mb-3">🛎️</div><p class="font-semibold">Conserjer&iacute;a</p><p class="text-gray-500 text-xs mt-1">24 horas</p></div>
+      <div class="p-6"><div class="text-4xl mb-3">🚐</div><p class="font-semibold">Transfer</p><p class="text-gray-500 text-xs mt-1">Aeropuerto</p></div>
+    </div>
+  </div>
+</section>
+
+<footer class="py-8 border-t border-white/5 text-center text-gray-500 text-sm">Demo creado por <span class="text-blue-400 font-semibold">SolCode</span></footer>
+
+<script>
+const rooms=[
+  {name:'Suite Est\u00e1ndar',price:89,img:'https://images.unsplash.com/photo-1631049307264-da0ec9d70304?w=600&q=80',beds:'1 Cama King',size:'32 m\u00b2',amenities:['WiFi','TV 55"','Minibar','A/C'],avail:true},
+  {name:'Suite Deluxe',price:149,img:'https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?w=600&q=80',beds:'1 Cama King + Sof\u00e1',size:'48 m\u00b2',amenities:['WiFi','TV 65"','Minibar','Balc\u00f3n','Jacuzzi'],avail:true},
+  {name:'Suite Presidencial',price:299,img:'https://images.unsplash.com/photo-1578683010236-d716f9a3f461?w=600&q=80',beds:'2 Camas King',size:'85 m\u00b2',amenities:['WiFi','TV 75"','Bar','Terraza','Jacuzzi','Sala'],avail:true},
+];
+
+function renderRooms(){
+  document.getElementById('rooms-grid').innerHTML=rooms.map(r=>`
+    <div class="room-card">
+      <div class="relative"><img src="${r.img}" alt="${r.name}">
+        <span class="absolute top-3 right-3 bg-blue-600 text-white text-xs px-3 py-1 rounded-full font-semibold">$${r.price}/noche</span>
+      </div>
+      <div class="p-6">
+        <h3 class="text-xl font-bold mb-1">${r.name}</h3>
+        <p class="text-gray-500 text-sm mb-3">${r.beds} · ${r.size}</p>
+        <div class="flex flex-wrap gap-1.5 mb-4">${r.amenities.map(a=>`<span class="amenity">${a}</span>`).join('')}</div>
+        <button onclick="bookRoom('${r.name}',${r.price})" class="w-full py-3 bg-blue-600 rounded-xl font-semibold hover:bg-blue-700 transition">${r.avail?'Reservar Ahora':'No Disponible'}</button>
+      </div>
+    </div>`).join('');
+}
+
+let guestCount=2;
+function changeGuests(d){guestCount=Math.max(1,Math.min(8,guestCount+d));document.getElementById('guests').textContent=guestCount}
+
+const t=new Date();t.setDate(t.getDate()+1);const t2=new Date(t);t2.setDate(t2.getDate()+2);
+document.getElementById('checkin').value=t.toISOString().split('T')[0];
+document.getElementById('checkout').value=t2.toISOString().split('T')[0];
+
+function searchRooms(){document.getElementById('rooms').scrollIntoView({behavior:'smooth'})}
+function bookRoom(name,price){
+  const ci=document.getElementById('checkin').value;
+  const co=document.getElementById('checkout').value;
+  const nights=Math.ceil((new Date(co)-new Date(ci))/(1000*60*60*24));
+  const total=price*nights;
+  alert(`Reservaci\u00f3n:\n${name}\n${ci} → ${co} (${nights} noches)\n${guestCount} hu\u00e9spedes\nTotal: $${total}\n\n(Demo - redirigir\u00eda a pasarela de pago)`);
+}
+renderRooms();
+</script>
+</body>
+</html>

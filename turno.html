@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TurnoYa - Sistema de Turnos Digital</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<style>
+body{font-family:system-ui,sans-serif;background:#0f172a;color:#fff}
+.screen{display:none}.screen.active{display:block}
+.ticket-number{font-size:120px;font-weight:900;line-height:1;background:linear-gradient(135deg,#3b82f6,#8b5cf6);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+.queue-item{display:grid;grid-template-columns:80px 1fr 100px;padding:16px 20px;border-bottom:1px solid #1e293b;align-items:center;transition:all .3s}
+.queue-item:hover{background:#1e293b}
+.queue-item.current{background:rgba(59,130,246,.1);border-left:3px solid #3b82f6}
+.service-btn{background:#1e293b;border:2px solid #334155;border-radius:16px;padding:24px;text-align:center;cursor:pointer;transition:all .3s}
+.service-btn:hover{border-color:#3b82f6;background:#1e293b;transform:scale(1.03)}
+.pulse{animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.6}}
+.display-board{background:linear-gradient(135deg,#0f172a,#1e293b);border:2px solid #334155;border-radius:24px;overflow:hidden}
+.now-serving{font-size:80px;font-weight:900;color:#3b82f6}
+.counter-badge{background:#3b82f6;color:#fff;padding:4px 12px;border-radius:20px;font-size:12px;font-weight:700}
+</style>
+</head>
+<body>
+
+<!-- Tab Navigation -->
+<nav class="bg-[#0f172a] border-b border-[#1e293b] sticky top-0 z-50">
+  <div class="max-w-6xl mx-auto px-6 py-3 flex justify-between items-center">
+    <span class="text-xl font-bold">Turno<span class="text-blue-400">Ya</span></span>
+    <div class="flex gap-1 bg-[#1e293b] rounded-full p-1">
+      <button onclick="showScreen('customer')" class="px-4 py-2 rounded-full text-sm font-medium transition" id="tab-customer">Cliente</button>
+      <button onclick="showScreen('display')" class="px-4 py-2 rounded-full text-sm font-medium transition" id="tab-display">Pantalla</button>
+      <button onclick="showScreen('admin')" class="px-4 py-2 rounded-full text-sm font-medium transition" id="tab-admin">Admin</button>
+    </div>
+  </div>
+</nav>
+
+<!-- CUSTOMER SCREEN: Take a number -->
+<div class="screen active" id="screen-customer">
+  <div class="max-w-lg mx-auto px-6 py-12 text-center">
+    <div class="text-5xl mb-4">🎫</div>
+    <h1 class="text-3xl font-bold mb-2">Tome su Turno</h1>
+    <p class="text-gray-400 mb-8">Seleccione el servicio que necesita</p>
+
+    <div class="grid grid-cols-2 gap-4 mb-8" id="service-buttons">
+      <div class="service-btn" onclick="takeNumber('Caja')">
+        <div class="text-3xl mb-2">💰</div>
+        <h4 class="font-bold">Caja</h4>
+        <p class="text-gray-500 text-xs mt-1" id="wait-Caja">~5 min espera</p>
+      </div>
+      <div class="service-btn" onclick="takeNumber('Atenci\u00f3n')">
+        <div class="text-3xl mb-2">👤</div>
+        <h4 class="font-bold">Atenci&oacute;n al Cliente</h4>
+        <p class="text-gray-500 text-xs mt-1" id="wait-Atención">~8 min espera</p>
+      </div>
+      <div class="service-btn" onclick="takeNumber('Farmacia')">
+        <div class="text-3xl mb-2">💊</div>
+        <h4 class="font-bold">Farmacia</h4>
+        <p class="text-gray-500 text-xs mt-1" id="wait-Farmacia">~3 min espera</p>
+      </div>
+      <div class="service-btn" onclick="takeNumber('Consulta')">
+        <div class="text-3xl mb-2">📋</div>
+        <h4 class="font-bold">Consulta</h4>
+        <p class="text-gray-500 text-xs mt-1" id="wait-Consulta">~10 min espera</p>
+      </div>
+    </div>
+
+    <!-- Ticket Result -->
+    <div id="ticket-result" class="hidden">
+      <div class="bg-[#1e293b] rounded-3xl p-10 border border-[#334155]">
+        <p class="text-gray-400 text-sm mb-2">Su turno es</p>
+        <div class="ticket-number" id="ticket-num">A-001</div>
+        <p class="text-gray-400 mt-4 mb-1" id="ticket-service">Servicio: Caja</p>
+        <p class="text-gray-500 text-sm" id="ticket-ahead">3 personas antes que usted</p>
+        <div class="mt-6 p-4 bg-blue-500/10 rounded-xl border border-blue-500/20">
+          <p class="text-blue-400 text-sm pulse">Ahora atendiendo: <strong id="ticket-current">A-098</strong></p>
+        </div>
+        <button onclick="resetTicket()" class="mt-6 px-6 py-2 bg-[#334155] rounded-full text-sm hover:bg-[#475569] transition">Tomar otro turno</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- DISPLAY SCREEN: TV/Monitor view -->
+<div class="screen" id="screen-display">
+  <div class="max-w-5xl mx-auto px-6 py-8">
+    <div class="display-board">
+      <div class="bg-blue-600 px-8 py-4 flex justify-between items-center">
+        <span class="font-bold text-lg">TurnoYa — Pantalla de Turnos</span>
+        <span class="text-blue-200 text-sm" id="display-time"></span>
+      </div>
+      <div class="grid md:grid-cols-2 gap-0">
+        <!-- Now Serving -->
+        <div class="p-12 text-center border-r border-[#334155]">
+          <p class="text-gray-400 text-sm tracking-widest uppercase mb-2">Ahora Atendiendo</p>
+          <div class="now-serving" id="display-current">A-004</div>
+          <p class="text-gray-500 mt-2" id="display-counter">Ventanilla 1</p>
+          <div class="mt-4"><span class="counter-badge">CAJA</span></div>
+        </div>
+        <!-- Next -->
+        <div class="p-12">
+          <p class="text-gray-400 text-sm tracking-widest uppercase mb-6">Pr&oacute;ximos</p>
+          <div class="space-y-3" id="display-next">
+            <div class="flex justify-between items-center p-3 bg-[#0f172a] rounded-xl"><span class="font-mono font-bold text-lg">A-005</span><span class="text-gray-500 text-sm">Caja</span></div>
+            <div class="flex justify-between items-center p-3 bg-[#0f172a] rounded-xl"><span class="font-mono font-bold text-lg">B-012</span><span class="text-gray-500 text-sm">Atenci&oacute;n</span></div>
+            <div class="flex justify-between items-center p-3 bg-[#0f172a] rounded-xl"><span class="font-mono font-bold text-lg">C-003</span><span class="text-gray-500 text-sm">Farmacia</span></div>
+            <div class="flex justify-between items-center p-3 bg-[#0f172a] rounded-xl"><span class="font-mono font-bold text-lg">D-008</span><span class="text-gray-500 text-sm">Consulta</span></div>
+          </div>
+        </div>
+      </div>
+      <!-- Stats bar -->
+      <div class="bg-[#0f172a] px-8 py-4 grid grid-cols-4 gap-4 text-center border-t border-[#334155]">
+        <div><p class="text-xl font-bold text-blue-400">12</p><p class="text-gray-500 text-[10px]">En espera</p></div>
+        <div><p class="text-xl font-bold text-green-400">47</p><p class="text-gray-500 text-[10px]">Atendidos hoy</p></div>
+        <div><p class="text-xl font-bold text-amber-400">4 min</p><p class="text-gray-500 text-[10px]">Espera promedio</p></div>
+        <div><p class="text-xl font-bold text-purple-400">4</p><p class="text-gray-500 text-[10px]">Ventanillas activas</p></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ADMIN SCREEN: Control panel -->
+<div class="screen" id="screen-admin">
+  <div class="max-w-4xl mx-auto px-6 py-8">
+    <div class="flex justify-between items-center mb-6">
+      <h2 class="text-2xl font-bold">Panel de Control</h2>
+      <div class="flex gap-2">
+        <span class="px-3 py-1 bg-green-500/20 text-green-400 rounded-full text-xs font-semibold">4 ventanillas activas</span>
+        <span class="px-3 py-1 bg-blue-500/20 text-blue-400 rounded-full text-xs font-semibold">12 en cola</span>
+      </div>
+    </div>
+
+    <!-- Counters -->
+    <div class="grid grid-cols-4 gap-4 mb-6">
+      <div class="bg-[#1e293b] rounded-xl p-4 border border-[#334155] text-center">
+        <p class="text-xs text-gray-500 mb-1">Ventanilla 1</p>
+        <p class="text-2xl font-bold text-blue-400">A-004</p>
+        <p class="text-xs text-gray-500">Caja</p>
+        <button onclick="nextTurn(1)" class="mt-3 px-4 py-2 bg-blue-600 rounded-lg text-xs font-semibold w-full hover:bg-blue-700 transition">Siguiente →</button>
+      </div>
+      <div class="bg-[#1e293b] rounded-xl p-4 border border-[#334155] text-center">
+        <p class="text-xs text-gray-500 mb-1">Ventanilla 2</p>
+        <p class="text-2xl font-bold text-green-400">B-011</p>
+        <p class="text-xs text-gray-500">Atenci&oacute;n</p>
+        <button onclick="nextTurn(2)" class="mt-3 px-4 py-2 bg-green-600 rounded-lg text-xs font-semibold w-full hover:bg-green-700 transition">Siguiente →</button>
+      </div>
+      <div class="bg-[#1e293b] rounded-xl p-4 border border-[#334155] text-center">
+        <p class="text-xs text-gray-500 mb-1">Ventanilla 3</p>
+        <p class="text-2xl font-bold text-amber-400">C-002</p>
+        <p class="text-xs text-gray-500">Farmacia</p>
+        <button onclick="nextTurn(3)" class="mt-3 px-4 py-2 bg-amber-600 rounded-lg text-xs font-semibold w-full hover:bg-amber-700 transition">Siguiente →</button>
+      </div>
+      <div class="bg-[#1e293b] rounded-xl p-4 border border-[#334155] text-center">
+        <p class="text-xs text-gray-500 mb-1">Ventanilla 4</p>
+        <p class="text-2xl font-bold text-purple-400">D-007</p>
+        <p class="text-xs text-gray-500">Consulta</p>
+        <button onclick="nextTurn(4)" class="mt-3 px-4 py-2 bg-purple-600 rounded-lg text-xs font-semibold w-full hover:bg-purple-700 transition">Siguiente →</button>
+      </div>
+    </div>
+
+    <!-- Queue List -->
+    <div class="bg-[#1e293b] rounded-2xl border border-[#334155] overflow-hidden">
+      <div class="px-6 py-4 border-b border-[#334155] flex justify-between items-center">
+        <h3 class="font-bold">Cola de Espera</h3>
+        <span class="text-gray-500 text-sm">12 turnos pendientes</span>
+      </div>
+      <div class="queue-item text-xs text-gray-500 font-semibold"><div>Turno</div><div>Servicio</div><div>Espera</div></div>
+      <div class="queue-item current"><div class="font-mono font-bold text-blue-400 text-lg">A-005</div><div>Caja<br><span class="text-gray-500 text-xs">Cliente preferencial</span></div><div class="text-amber-400">2 min</div></div>
+      <div class="queue-item"><div class="font-mono font-bold text-lg">B-012</div><div>Atenci&oacute;n al Cliente</div><div class="text-gray-500">5 min</div></div>
+      <div class="queue-item"><div class="font-mono font-bold text-lg">C-003</div><div>Farmacia</div><div class="text-gray-500">3 min</div></div>
+      <div class="queue-item"><div class="font-mono font-bold text-lg">A-006</div><div>Caja</div><div class="text-gray-500">7 min</div></div>
+      <div class="queue-item"><div class="font-mono font-bold text-lg">D-008</div><div>Consulta</div><div class="text-gray-500">8 min</div></div>
+      <div class="queue-item"><div class="font-mono font-bold text-lg">B-013</div><div>Atenci&oacute;n al Cliente</div><div class="text-gray-500">10 min</div></div>
+      <div class="queue-item"><div class="font-mono font-bold text-lg">A-007</div><div>Caja</div><div class="text-gray-500">12 min</div></div>
+    </div>
+  </div>
+</div>
+
+<footer class="py-8 border-t border-[#1e293b] text-center text-gray-500 text-sm">Demo creado por <span class="text-blue-400 font-semibold">SolCode</span></footer>
+
+<script>
+const prefixes={Caja:'A','Atención':'B',Farmacia:'C',Consulta:'D'};
+const counters={Caja:4,'Atención':11,Farmacia:2,Consulta:7};
+
+function showScreen(name){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.getElementById('screen-'+name).classList.add('active');
+  document.querySelectorAll('[id^=tab-]').forEach(t=>{t.className='px-4 py-2 rounded-full text-sm font-medium transition text-gray-400'});
+  document.getElementById('tab-'+name).className='px-4 py-2 rounded-full text-sm font-medium transition bg-blue-600 text-white';
+}
+showScreen('customer');
+
+function takeNumber(service){
+  counters[service]=(counters[service]||0)+1;
+  const prefix=prefixes[service]||'X';
+  const num=prefix+'-'+String(counters[service]).padStart(3,'0');
+  const ahead=Math.floor(Math.random()*5)+1;
+  document.getElementById('ticket-num').textContent=num;
+  document.getElementById('ticket-service').textContent='Servicio: '+service;
+  document.getElementById('ticket-ahead').textContent=ahead+' personas antes que usted';
+  document.getElementById('ticket-current').textContent=prefix+'-'+String(counters[service]-ahead-1).padStart(3,'0');
+  document.getElementById('ticket-result').classList.remove('hidden');
+  document.getElementById('service-buttons').classList.add('hidden');
+}
+
+function resetTicket(){
+  document.getElementById('ticket-result').classList.add('hidden');
+  document.getElementById('service-buttons').classList.remove('hidden');
+}
+
+function nextTurn(counter){
+  alert('Ventanilla '+counter+': Llamando al siguiente turno... (Demo)');
+}
+
+// Update time
+function updateTime(){
+  const now=new Date();
+  const el=document.getElementById('display-time');
+  if(el)el.textContent=now.toLocaleTimeString('es-PA',{hour:'2-digit',minute:'2-digit',second:'2-digit'});
+}
+setInterval(updateTime,1000);updateTime();
+</script>
+</body>
+</html>

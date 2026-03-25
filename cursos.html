@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>EduPlus - Plataforma de Cursos Online</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<style>
+body{font-family:system-ui,sans-serif;background:#f8fafc;color:#1e293b}
+.course-card{background:#fff;border-radius:16px;overflow:hidden;border:1px solid #e2e8f0;transition:all .3s}
+.course-card:hover{box-shadow:0 10px 30px rgba(0,0,0,.08);transform:translateY(-3px)}
+.course-card img{height:180px;width:100%;object-fit:cover}
+.progress-bar{height:6px;background:#e2e8f0;border-radius:3px;overflow:hidden}
+.progress-bar div{height:100%;background:linear-gradient(90deg,#6366f1,#8b5cf6);border-radius:3px;transition:width .5s}
+.cat-chip{padding:6px 16px;border-radius:20px;font-size:12px;border:1px solid #e2e8f0;cursor:pointer;transition:all .2s;background:#fff}
+.cat-chip.active,.cat-chip:hover{background:#6366f1;color:#fff;border-color:#6366f1}
+.level{font-size:10px;padding:3px 8px;border-radius:6px;font-weight:600}
+.level-basic{background:#dcfce7;color:#16a34a}
+.level-mid{background:#fef3c7;color:#d97706}
+.level-adv{background:#fee2e2;color:#dc2626}
+.sidebar-item{padding:10px 16px;border-radius:10px;font-size:14px;cursor:pointer;transition:all .2s;display:flex;align-items:center;gap:10px}
+.sidebar-item:hover,.sidebar-item.active{background:#6366f1;color:#fff}
+</style>
+</head>
+<body>
+<nav class="bg-white border-b sticky top-0 z-50">
+  <div class="max-w-6xl mx-auto px-6 py-3 flex justify-between items-center">
+    <div class="flex items-center gap-2">
+      <div class="w-8 h-8 bg-indigo-500 rounded-lg flex items-center justify-center text-white font-bold text-sm">E</div>
+      <span class="text-xl font-bold">Edu<span class="text-indigo-500">Plus</span></span>
+    </div>
+    <div class="hidden md:flex items-center gap-1 bg-gray-100 rounded-full px-4 py-2 flex-1 max-w-sm mx-6">
+      <span class="text-gray-400">🔍</span>
+      <input type="text" placeholder="Buscar cursos..." class="bg-transparent outline-none text-sm flex-1 ml-1" id="search" oninput="renderCourses()">
+    </div>
+    <div class="flex items-center gap-3">
+      <span class="text-sm text-gray-500 hidden md:block">Hola, <strong>Estudiante</strong></span>
+      <div class="w-9 h-9 bg-indigo-100 text-indigo-600 rounded-full flex items-center justify-center font-bold text-sm">E</div>
+    </div>
+  </div>
+</nav>
+
+<div class="max-w-6xl mx-auto px-6 py-8">
+  <!-- My Progress -->
+  <div class="bg-gradient-to-r from-indigo-500 to-purple-600 rounded-2xl p-8 text-white mb-8">
+    <div class="flex justify-between items-center">
+      <div>
+        <p class="text-indigo-200 text-sm mb-1">Continuar aprendiendo</p>
+        <h2 class="text-2xl font-bold mb-2">Desarrollo Web con React</h2>
+        <div class="flex items-center gap-3 mb-4">
+          <div class="progress-bar w-48" style="background:rgba(255,255,255,.2)"><div style="width:65%;background:#fff"></div></div>
+          <span class="text-sm">65% completado</span>
+        </div>
+        <button class="px-6 py-2.5 bg-white text-indigo-600 rounded-full font-semibold text-sm hover:bg-indigo-50 transition">Continuar Lecci&oacute;n 12 →</button>
+      </div>
+      <div class="hidden md:block text-7xl">📚</div>
+    </div>
+  </div>
+
+  <!-- Stats -->
+  <div class="grid grid-cols-4 gap-4 mb-8">
+    <div class="bg-white rounded-xl p-4 border"><p class="text-2xl font-bold text-indigo-500">3</p><p class="text-gray-500 text-xs">Cursos Activos</p></div>
+    <div class="bg-white rounded-xl p-4 border"><p class="text-2xl font-bold text-green-500">1</p><p class="text-gray-500 text-xs">Completados</p></div>
+    <div class="bg-white rounded-xl p-4 border"><p class="text-2xl font-bold text-amber-500">24</p><p class="text-gray-500 text-xs">Horas de Estudio</p></div>
+    <div class="bg-white rounded-xl p-4 border"><p class="text-2xl font-bold text-purple-500">2</p><p class="text-gray-500 text-xs">Certificados</p></div>
+  </div>
+
+  <!-- Filters -->
+  <div class="flex justify-between items-center mb-6">
+    <h2 class="text-xl font-bold">Todos los Cursos</h2>
+    <div class="flex gap-2">
+      <button class="cat-chip active" onclick="filterCat('all',this)">Todos</button>
+      <button class="cat-chip" onclick="filterCat('web',this)">Web</button>
+      <button class="cat-chip" onclick="filterCat('mobile',this)">M&oacute;vil</button>
+      <button class="cat-chip" onclick="filterCat('design',this)">Dise&ntilde;o</button>
+      <button class="cat-chip" onclick="filterCat('business',this)">Negocios</button>
+    </div>
+  </div>
+
+  <!-- Courses Grid -->
+  <div class="grid md:grid-cols-3 gap-6" id="courses-grid"></div>
+</div>
+
+<footer class="text-center py-8 text-gray-400 text-sm border-t mt-8">Demo creado por <span class="text-indigo-500 font-semibold">SolCode</span></footer>
+
+<script>
+const courses=[
+  {name:'Desarrollo Web con React',instructor:'Carlos M.',price:49,hours:32,lessons:48,students:1240,rating:4.9,cat:'web',level:'mid',img:'https://images.unsplash.com/photo-1633356122544-f134324a6cee?w=500&q=80',progress:65},
+  {name:'Python desde Cero',instructor:'Ana R.',price:29,hours:20,lessons:30,students:3200,rating:4.8,cat:'web',level:'basic',img:'https://images.unsplash.com/photo-1526379095098-d400fd0bf935?w=500&q=80',progress:0},
+  {name:'Dise\u00f1o UI/UX con Figma',instructor:'Luisa P.',price:39,hours:18,lessons:25,students:890,rating:4.7,cat:'design',level:'basic',img:'https://images.unsplash.com/photo-1561070791-2526d30994b5?w=500&q=80',progress:0},
+  {name:'Flutter - Apps M\u00f3viles',instructor:'Roberto C.',price:59,hours:40,lessons:55,students:670,rating:4.8,cat:'mobile',level:'mid',img:'https://images.unsplash.com/photo-1512941937669-90a1b58e7e9c?w=500&q=80',progress:30},
+  {name:'Marketing Digital',instructor:'Jenny L.',price:35,hours:15,lessons:22,students:2100,rating:4.6,cat:'business',level:'basic',img:'https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=500&q=80',progress:0},
+  {name:'Node.js & APIs REST',instructor:'Carlos M.',price:45,hours:28,lessons:38,students:980,rating:4.9,cat:'web',level:'adv',img:'https://images.unsplash.com/photo-1627398242454-45a1465c2479?w=500&q=80',progress:10},
+  {name:'Illustrator para Principiantes',instructor:'Mar\u00eda G.',price:25,hours:12,lessons:18,students:1500,rating:4.5,cat:'design',level:'basic',img:'https://images.unsplash.com/photo-1626785774573-4b799315345d?w=500&q=80',progress:0},
+  {name:'React Native Avanzado',instructor:'Pedro A.',price:69,hours:35,lessons:42,students:450,rating:4.7,cat:'mobile',level:'adv',img:'https://images.unsplash.com/photo-1551650975-87deedd944c3?w=500&q=80',progress:0},
+  {name:'Contabilidad B\u00e1sica',instructor:'Rosa M.',price:19,hours:10,lessons:15,students:1800,rating:4.4,cat:'business',level:'basic',img:'https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=500&q=80',progress:100},
+];
+
+const levelMap={basic:['B\u00e1sico','level-basic'],mid:['Intermedio','level-mid'],adv:['Avanzado','level-adv']};
+let currentCat='all';
+
+function renderCourses(){
+  const search=document.getElementById('search').value.toLowerCase();
+  let filtered=currentCat==='all'?courses:courses.filter(c=>c.cat===currentCat);
+  if(search)filtered=filtered.filter(c=>c.name.toLowerCase().includes(search));
+  document.getElementById('courses-grid').innerHTML=filtered.map(c=>{
+    const [lName,lClass]=levelMap[c.level];
+    return `<div class="course-card">
+      <div class="relative"><img src="${c.img}" alt="${c.name}">
+        <span class="absolute top-3 left-3 level ${lClass}">${lName}</span>
+        ${c.progress===100?'<span class="absolute top-3 right-3 bg-green-500 text-white text-[10px] px-2 py-1 rounded-full font-bold">COMPLETADO</span>':''}
+      </div>
+      <div class="p-5">
+        <h4 class="font-bold mb-1">${c.name}</h4>
+        <p class="text-gray-500 text-xs mb-3">por ${c.instructor} · ${c.hours}h · ${c.lessons} lecciones</p>
+        ${c.progress>0&&c.progress<100?`<div class="progress-bar mb-3"><div style="width:${c.progress}%"></div></div><p class="text-xs text-indigo-500 mb-3">${c.progress}% completado</p>`:''}
+        <div class="flex items-center gap-2 mb-3">
+          <span class="text-amber-500 text-sm">${'★'.repeat(Math.floor(c.rating))}</span>
+          <span class="text-gray-400 text-xs">(${c.students.toLocaleString()} estudiantes)</span>
+        </div>
+        <div class="flex justify-between items-center">
+          <span class="text-xl font-bold text-indigo-500">$${c.price}</span>
+          <button onclick="enroll('${c.name}',${c.price})" class="px-4 py-2 bg-indigo-500 text-white rounded-xl text-sm font-semibold hover:bg-indigo-600 transition">${c.progress>0?'Continuar':'Inscribirse'}</button>
+        </div>
+      </div>
+    </div>`}).join('');
+}
+
+function filterCat(cat,btn){
+  currentCat=cat;
+  document.querySelectorAll('.cat-chip').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  renderCourses();
+}
+
+function enroll(name,price){alert(`Inscripci\u00f3n: ${name} - $${price}\n\n(Demo - redirigir\u00eda a pago)`)}
+
+renderCourses();
+</script>
+</body>
+</html>

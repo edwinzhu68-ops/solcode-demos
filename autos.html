@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AutoPanamá - Venta y Alquiler de Vehículos</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<style>
+body{font-family:system-ui,sans-serif;background:#111;color:#fff}
+.car-card{background:#1a1a1a;border-radius:16px;overflow:hidden;border:1px solid #222;transition:all .3s}
+.car-card:hover{border-color:#f59e0b;transform:translateY(-4px);box-shadow:0 12px 30px rgba(245,158,11,.1)}
+.car-card img{height:200px;width:100%;object-fit:cover;transition:transform .4s}
+.car-card:hover img{transform:scale(1.05)}
+.filter-btn{padding:8px 18px;border-radius:30px;font-size:13px;border:1px solid #333;background:transparent;color:#999;cursor:pointer;transition:all .2s}
+.filter-btn.active,.filter-btn:hover{background:#f59e0b;color:#000;border-color:#f59e0b;font-weight:600}
+.spec{display:flex;align-items:center;gap:6px;font-size:12px;color:#888}
+.tag{font-size:10px;padding:3px 8px;border-radius:6px;font-weight:600}
+.tag-sale{background:#22c55e20;color:#22c55e}
+.tag-rent{background:#3b82f620;color:#3b82f6}
+</style>
+</head>
+<body>
+<nav class="fixed top-0 w-full z-50 bg-black/80 backdrop-blur-xl border-b border-white/5">
+  <div class="max-w-6xl mx-auto px-6 py-4 flex justify-between items-center">
+    <span class="text-xl font-bold">Auto<span class="text-amber-400">Panam&aacute;</span></span>
+    <div class="hidden md:flex gap-6 text-sm text-gray-400">
+      <a href="#cars" class="hover:text-white">Inventario</a>
+      <a href="#why" class="hover:text-white">Nosotros</a>
+    </div>
+    <a href="https://wa.me/50768040864" class="px-5 py-2 bg-amber-500 text-black rounded-full text-sm font-semibold hover:bg-amber-400 transition">WhatsApp</a>
+  </div>
+</nav>
+
+<section class="pt-32 pb-16 text-center px-4">
+  <p class="text-amber-400 text-sm tracking-[4px] uppercase mb-3">Venta &amp; Alquiler</p>
+  <h1 class="text-4xl md:text-6xl font-bold mb-4">Encuentre su Veh&iacute;culo Ideal</h1>
+  <p class="text-gray-500 max-w-lg mx-auto mb-8">Los mejores veh&iacute;culos nuevos y usados en Panam&aacute;. Financiamiento disponible.</p>
+  <div class="max-w-2xl mx-auto flex gap-2 bg-[#1a1a1a] border border-[#333] rounded-2xl p-2">
+    <input type="text" placeholder="Buscar marca, modelo, año..." class="flex-1 bg-transparent outline-none px-4 text-sm" id="search" oninput="renderCars()">
+    <button class="px-6 py-3 bg-amber-500 text-black rounded-xl font-semibold text-sm">Buscar</button>
+  </div>
+</section>
+
+<section id="cars" class="max-w-6xl mx-auto px-6 pb-20">
+  <div class="flex flex-wrap gap-2 mb-8 justify-center">
+    <button class="filter-btn active" onclick="filterType('all',this)">Todos</button>
+    <button class="filter-btn" onclick="filterType('sale',this)">En Venta</button>
+    <button class="filter-btn" onclick="filterType('rent',this)">Alquiler</button>
+    <button class="filter-btn" onclick="filterType('suv',this)">SUV</button>
+    <button class="filter-btn" onclick="filterType('sedan',this)">Sed&aacute;n</button>
+    <button class="filter-btn" onclick="filterType('pickup',this)">Pickup</button>
+  </div>
+
+  <div class="flex gap-4 mb-6 overflow-x-auto pb-2">
+    <select class="bg-[#1a1a1a] border border-[#333] rounded-xl px-4 py-2 text-sm outline-none" id="sort" onchange="renderCars()">
+      <option value="price-asc">Precio: menor a mayor</option>
+      <option value="price-desc">Precio: mayor a menor</option>
+      <option value="year-desc">A&ntilde;o: m&aacute;s reciente</option>
+    </select>
+    <select class="bg-[#1a1a1a] border border-[#333] rounded-xl px-4 py-2 text-sm outline-none" id="yearFilter" onchange="renderCars()">
+      <option value="">Todos los a&ntilde;os</option>
+      <option value="2025">2025</option><option value="2024">2024</option><option value="2023">2023</option><option value="2022">2022</option>
+    </select>
+  </div>
+
+  <div class="grid md:grid-cols-3 gap-6" id="cars-grid"></div>
+</section>
+
+<section id="why" class="py-16 border-t border-white/5">
+  <div class="max-w-4xl mx-auto px-6 grid md:grid-cols-3 gap-8 text-center">
+    <div><div class="text-3xl mb-3">🛡️</div><h4 class="font-bold mb-1">Garant&iacute;a Incluida</h4><p class="text-gray-500 text-sm">Todos nuestros veh&iacute;culos con garant&iacute;a mec&aacute;nica</p></div>
+    <div><div class="text-3xl mb-3">💰</div><h4 class="font-bold mb-1">Financiamiento</h4><p class="text-gray-500 text-sm">Hasta 72 meses. Aceptamos trade-in</p></div>
+    <div><div class="text-3xl mb-3">🚗</div><h4 class="font-bold mb-1">Test Drive</h4><p class="text-gray-500 text-sm">Pruebe antes de comprar. Sin compromiso</p></div>
+  </div>
+</section>
+
+<footer class="py-8 border-t border-white/5 text-center text-gray-500 text-sm">Demo creado por <span class="text-amber-400 font-semibold">SolCode</span></footer>
+
+<script>
+const cars=[
+  {name:'Toyota RAV4',year:2025,price:38500,monthly:650,type:'suv',mode:'sale',km:0,fuel:'Gasolina',trans:'Autom\u00e1tica',img:'https://images.unsplash.com/photo-1621007947382-bb3c3994e3fb?w=500&q=80'},
+  {name:'Hyundai Tucson',year:2024,price:32000,monthly:540,type:'suv',mode:'sale',km:8500,fuel:'Gasolina',trans:'Autom\u00e1tica',img:'https://images.unsplash.com/photo-1583121274602-3e2820c69888?w=500&q=80'},
+  {name:'Toyota Corolla',year:2024,price:24500,monthly:420,type:'sedan',mode:'sale',km:12000,fuel:'Gasolina',trans:'Autom\u00e1tica',img:'https://images.unsplash.com/photo-1623869675781-80aa31012c78?w=500&q=80'},
+  {name:'Honda Civic',year:2025,price:27000,monthly:460,type:'sedan',mode:'sale',km:0,fuel:'Gasolina',trans:'CVT',img:'https://images.unsplash.com/photo-1606611013016-969c19ba27c8?w=500&q=80'},
+  {name:'Toyota Hilux',year:2024,price:42000,monthly:710,type:'pickup',mode:'sale',km:5000,fuel:'Diesel',trans:'Autom\u00e1tica',img:'https://images.unsplash.com/photo-1559416523-140ddc3d238c?w=500&q=80'},
+  {name:'Nissan Frontier',year:2023,price:35000,monthly:590,type:'pickup',mode:'sale',km:18000,fuel:'Diesel',trans:'Autom\u00e1tica',img:'https://images.unsplash.com/photo-1558618666-fcd25c85f82e?w=500&q=80'},
+  {name:'Kia Sportage',year:2024,price:75,monthly:0,type:'suv',mode:'rent',km:0,fuel:'Gasolina',trans:'Autom\u00e1tica',img:'https://images.unsplash.com/photo-1619767886558-efdc259cde1a?w=500&q=80'},
+  {name:'Hyundai Accent',year:2024,price:45,monthly:0,type:'sedan',mode:'rent',km:0,fuel:'Gasolina',trans:'Autom\u00e1tica',img:'https://images.unsplash.com/photo-1580273916550-e323be2ae537?w=500&q=80'},
+  {name:'Toyota 4Runner',year:2023,price:95,monthly:0,type:'suv',mode:'rent',km:0,fuel:'Gasolina',trans:'Autom\u00e1tica',img:'https://images.unsplash.com/photo-1533473359331-0135ef1b58bf?w=500&q=80'},
+];
+
+let currentType='all';
+
+function renderCars(){
+  const search=document.getElementById('search').value.toLowerCase();
+  const sort=document.getElementById('sort').value;
+  const yearF=document.getElementById('yearFilter').value;
+  let filtered=cars.filter(c=>{
+    if(currentType!=='all'){
+      if(['sale','rent'].includes(currentType)&&c.mode!==currentType)return false;
+      if(['suv','sedan','pickup'].includes(currentType)&&c.type!==currentType)return false;
+    }
+    if(yearF&&c.year!=yearF)return false;
+    if(search&&!c.name.toLowerCase().includes(search))return false;
+    return true;
+  });
+  if(sort==='price-asc')filtered.sort((a,b)=>a.price-b.price);
+  if(sort==='price-desc')filtered.sort((a,b)=>b.price-a.price);
+  if(sort==='year-desc')filtered.sort((a,b)=>b.year-a.year);
+
+  document.getElementById('cars-grid').innerHTML=filtered.map(c=>`
+    <div class="car-card">
+      <div class="relative"><img src="${c.img}" alt="${c.name}">
+        <span class="absolute top-3 left-3 tag ${c.mode==='sale'?'tag-sale':'tag-rent'}">${c.mode==='sale'?'EN VENTA':'ALQUILER'}</span>
+      </div>
+      <div class="p-5">
+        <div class="flex justify-between items-start mb-1">
+          <h4 class="font-bold text-lg">${c.name}</h4>
+          <span class="text-amber-400 text-xs">${c.year}</span>
+        </div>
+        <div class="flex gap-4 my-3">
+          <span class="spec">⛽ ${c.fuel}</span>
+          <span class="spec">⚙️ ${c.trans}</span>
+          <span class="spec">📏 ${c.km>0?c.km.toLocaleString()+' km':'0 km'}</span>
+        </div>
+        <div class="flex justify-between items-end mt-4">
+          <div>
+            <span class="text-2xl font-bold text-amber-400">$${c.price.toLocaleString()}</span>
+            <span class="text-gray-500 text-xs">${c.mode==='rent'?'/d\u00eda':''}</span>
+            ${c.monthly?`<p class="text-gray-500 text-xs">~$${c.monthly}/mes financiado</p>`:''}
+          </div>
+          <button onclick="inquire('${c.name}',${c.price},'${c.mode}')" class="px-4 py-2 bg-amber-500 text-black rounded-xl text-sm font-semibold hover:bg-amber-400 transition">Consultar</button>
+        </div>
+      </div>
+    </div>`).join('')||'<p class="text-gray-500 text-center col-span-3 py-8">No se encontraron veh\u00edculos</p>';
+}
+
+function filterType(type,btn){
+  currentType=type;
+  document.querySelectorAll('.filter-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  renderCars();
+}
+
+function inquire(name,price,mode){
+  const msg=mode==='sale'?`Hola, me interesa el ${name} ($${price.toLocaleString()}). ¿Está disponible?`:`Hola, quiero alquilar el ${name} ($${price}/día). ¿Tienen disponibilidad?`;
+  window.open(`https://wa.me/50768040864?text=${encodeURIComponent(msg)}`);
+}
+
+renderCars();
+</script>
+</body>
+</html>
